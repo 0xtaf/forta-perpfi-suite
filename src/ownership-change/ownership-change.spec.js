@@ -53,7 +53,6 @@ describe('ownership change event monitoring', () => {
       address: clearingHouseAddress,
       topics: [
         ethers.utils.keccak256(ethers.utils.toUtf8Bytes('Paused(address)')),
-        ethers.constants.HashZero,
       ],
       data: `0x${'0'.repeat(64)}`,
     },

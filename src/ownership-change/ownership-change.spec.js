@@ -1,11 +1,6 @@
 const ethers = require('ethers');
 
-const {
-  TransactionEvent,
-  FindingType,
-  FindingSeverity,
-  Finding,
-} = require('forta-agent');
+const { TransactionEvent } = require('forta-agent');
 
 // import the handler under test
 const { handleTransaction, createAlert } = require('./ownership-change');
@@ -16,9 +11,9 @@ const common = require('../common');
 // create constants to test the handler with
 const contractName = 'ClearingHouse';
 const clearingHouseAddress = (common.getAddressLayer2(contractName)).toLowerCase();
-const clearingHouseAbi = common.getAbiLayer2(contractName, true);
 
-const iface = new ethers.utils.Interface(clearingHouseAbi);
+const validEventName = 'OwnershipTransferred';
+const invalidEventName = 'Paused';
 
 /**
  * TransactionEvent(type, network, transaction, receipt, traces, addresses, block)
@@ -29,17 +24,16 @@ function createTxEvent({ logs, addresses }) {
 
 // tests
 describe('ownership change event monitoring', () => {
-
   // logs data for test case: address match + topic match (should trigger a finding)
   const logsMatchEvent = [
     {
       address: clearingHouseAddress,
       topics: [
-        ethers.utils.keccak256(ethers.utils.toUtf8Bytes('OwnershipTransferred(address,address)')),
+        ethers.utils.keccak256(ethers.utils.toUtf8Bytes(`${validEventName}(address,address)`)),
         ethers.constants.HashZero,
         ethers.constants.HashZero,
       ],
-      name: 'OwnershipTransferred',
+      name: validEventName,
       data: `0x${'0'.repeat(64)}`,
       args: {
         newOwner: ethers.constants.AddressZero,
@@ -52,7 +46,7 @@ describe('ownership change event monitoring', () => {
     {
       address: clearingHouseAddress,
       topics: [
-        ethers.utils.keccak256(ethers.utils.toUtf8Bytes('Paused(address)')),
+        ethers.utils.keccak256(ethers.utils.toUtf8Bytes(`${invalidEventName}(address)`)),
       ],
       data: `0x${'0'.repeat(64)}`,
     },
@@ -95,9 +89,7 @@ describe('ownership change event monitoring', () => {
     });
 
     it('returns a finding if a target contract emits an event from its watchlist', async () => {
-      const eventName = 'OwnershipTransferred';
-      const contractName = 'ClearingHouse';
-      const contractAddress = clearingHouseAddress;
+      const eventName = validEventName;
 
       // build txEvent
       const txEvent = createTxEvent({
@@ -110,11 +102,10 @@ describe('ownership change event monitoring', () => {
 
       // create expected finding
       const log = logsMatchEvent[0];
-      const expectedFinding = createAlert(log, eventName, contractName, contractAddress);
+      const expectedFinding = createAlert(log, eventName, contractName, clearingHouseAddress);
 
       // assertions
       expect(findings).toStrictEqual([expectedFinding]);
-
     });
   });
 });

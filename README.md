@@ -5,6 +5,8 @@
 This agent monitors various aspects of Perpetual Finance (Perp.Fi).  The Perp.Fi suite currently contains
 the following handlers:
 
+- ownership-change
+
 ## Supported Chains
 
 - xDai

@@ -53,9 +53,9 @@ function createAlert(log, eventName, contractName, contractAddress) {
   }
 
   return Finding.fromObject({
-    name: 'Perp.Fi Admin Event',
+    name: 'Perp.Fi Contract Ownership Change Event',
     description: `The ${eventName} event was emitted by the ${contractName} contract`,
-    alertId: 'AE-PERPFI-ADMIN-EVENT',
+    alertId: 'AE-PERPFI-OWNER-CHANGED-EVENT',
     protocol: 'Perp.Fi',
     severity: FindingSeverity.Low,
     type: FindingType.Suspicious,

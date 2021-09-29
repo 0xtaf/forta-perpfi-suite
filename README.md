@@ -7,10 +7,15 @@ the following handlers:
 
 ## Supported Chains
 
-- xDai
+- Ethereum Rinkeby
 
 ## Alerts
 
+- AE-PERPFI-ADMIN-EVENT
+  - Fired when a transaction log contains an event that matches a list of Perp.Fi administrative events
+  - Severity is always set to "high"
+  - Type is always set to "suspicious"
+  - Metadata field contains Perp.Fi contract name and address, and event name
 
 ## Test Data
 

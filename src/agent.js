@@ -1,12 +1,11 @@
 // transaction handlers
-// <none>
+const ownershipChange = require('./ownership-change/ownership-change');
 
 // block handlers
 // <none>
 
 const txHandlers = [
-  // list txHandlers like this `optimisticOracle,` +++++ REMOVE ME +++++
-  // <none>
+  ownershipChange,
 ];
 
 const blockHandlers = [

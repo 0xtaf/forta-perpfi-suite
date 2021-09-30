@@ -5,12 +5,10 @@ const { TransactionEvent } = require('forta-agent');
 // import the handler under test
 const { handleTransaction, createAlert } = require('./ownership-change');
 
-// import helper functions for loading the perp.fi contract addresses and abis
-const common = require('../common');
-
 // create constants to test the handler with
+const protocolData = require('../../protocol-data.json');
 const contractName = 'ClearingHouse';
-const clearingHouseAddress = (common.getAddressLayer2(contractName)).toLowerCase();
+const clearingHouseAddress = protocolData.contracts[contractName].address.toLowerCase();
 
 const validEventName = 'OwnershipTransferred';
 const invalidEventName = 'Paused';

@@ -1,36 +1,53 @@
 const ethers = require('ethers');
 const { Finding, FindingSeverity, FindingType } = require('forta-agent');
 
+// load the UniswapV3Factory abi
+const {
+  abi: uniswapV3FactoryAbi,
+} = require('@uniswap/v3-core/artifacts/contracts/UniswapV3Factory.sol/UniswapV3Factory.json');
+const protocolData = require('../../protocol-data.json');
+
+const baseTokens = ['vUSD', 'vBTC', 'vETH'];
+
 // load any agent configuration parameters
 const { perpfiEverestId } = require('../../agent-config.json');
 
-// import helper functions for loading the perp.fi contract addresses and abis
-const common = require('../common');
+// load the contracts that we would like to monitor
+const contractNames = require('./contracts-to-monitor.json');
 
-// load the contracts and events that we would like to monitor
-const contractNamesEvents = require('./ownership-change-events.json');
+// iterate over the contracts to get their addresses, abis, and create ethers interfaces
+const contractAddressesAbis = [];
+contractNames.forEach((contractName) => {
+  let address;
+  let contractAbi;
+  // get the contract address and abi
+  if (contractName === 'UniswapV3Factory') {
+    address = protocolData.externalContracts.UniswapV3Factory.toLowerCase();
+    contractAbi = uniswapV3FactoryAbi;
+  } else if (baseTokens.indexOf(contractName) !== -1) {
+    if (contractName === 'vUSD') {
+      address = protocolData.pools[0].quoteAddress.toLowerCase();
+    }
+    else {
+      address = protocolData.contracts[contractName].address.toLowerCase();
+    }
+    // eslint-disable-next-line global-require,import/no-dynamic-require
+    const { abi } = require('../../abis/BaseToken.json');
+    contractAbi = abi;
+  } else {
+    address = protocolData.contracts[contractName].address.toLowerCase();
+    // eslint-disable-next-line global-require,import/no-dynamic-require
+    const { abi } = require(`../../abis/${contractName}.json`);
+    contractAbi = abi;
+  }
 
-// this is a toggle for using V1 instead of V2 for contracts that specify both
-// i.e. ClearingHouse.sol and ClearingHouseV1.sol are both contracts
-const useLegacy = true;
+  const iface = new ethers.utils.Interface(contractAbi);
 
-// iterate over the contracts to get their addresses and abis
-const contractAddressesAbisEvents = [];
-(Object.keys(contractNamesEvents)).forEach((contractName) => {
-  // get the contract address
-  const address = common.getAddressLayer2(contractName);
-
-  // get the contract abi
-  const abi = common.getAbiLayer2(contractName, useLegacy);
-
-  // create ethers Interface object
-  const iface = new ethers.utils.Interface(abi);
-
-  contractAddressesAbisEvents.push({
+  // add a key/value pair for the contract name and address
+  contractAddressesAbis.push({
     name: contractName,
-    address: address.toLowerCase(),
-    abi,
-    events: contractNamesEvents[contractName],
+    address,
+    contractAbi,
     iface,
   });
 });
@@ -42,15 +59,8 @@ function createAlert(log, eventName, contractName, contractAddress) {
     contractName,
     contractAddress,
     eventName,
+    newOwner: log.args.newOwner, // this will be present if the event is OwnershipTransferred
   };
-
-  // if this is an ownership transfer event, add the new owner address to the finding
-  if (log.name === 'OwnershipTransferred') {
-    // signature is OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
-    //   args[0] is previousOwner, accessible using args.previousOwner
-    //   args[1] is newOwner, accesible using args.newOwner
-    metadata.newOwner = log.args.newOwner;
-  }
 
   return Finding.fromObject({
     name: 'Perp.Fi Contract Ownership Change Event',
@@ -71,7 +81,7 @@ function filterAndParseLogs(logs, contractData) {
 
   // decode logs and filter on the ones we are interested in
   const parse = (log) => contractData.iface.parseLog(log);
-  const filter = (log) => (contractData.events).indexOf(log.name) !== -1;
+  const filter = (log) => (log.name === 'OwnershipTransferred');
   const parsedLogs = perpfiLogs.map(parse).filter(filter);
 
   return parsedLogs;
@@ -82,7 +92,7 @@ async function handleTransaction(txEvent) {
 
   const { logs } = txEvent;
 
-  contractAddressesAbisEvents.forEach((contractData) => {
+  contractAddressesAbis.forEach((contractData) => {
     const parsedLogs = filterAndParseLogs(logs, contractData);
     parsedLogs.forEach((log) => {
       findings.push(createAlert(log, log.name, contractData.name, contractData.address));

@@ -14,10 +14,10 @@ the following handlers:
 ## Alerts
 
 - AE-PERPFI-ADMIN-EVENT
-  - Fired when a transaction log contains an event that matches a list of Perp.Fi administrative events
+  - Fired when a transaction log contains an OwnershipTransferred event for specific Perp.Fi contracts
   - Severity is always set to "low"
   - Type is always set to "suspicious"
-  - Metadata field contains Perp.Fi contract name and address, and event name
+  - Metadata field contains Perp.Fi contract name, contract address, event name, and new owner
 
 ## Test Data
 

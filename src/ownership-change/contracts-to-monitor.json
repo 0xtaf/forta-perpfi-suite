@@ -1,0 +1,13 @@
+[
+  "UniswapV3Factory",
+  "ClearingHouse",
+  "ClearingHouseConfig",
+  "Vault",
+  "InsuranceFund",
+  "Exchange",
+  "MarketRegistry",
+  "OrderBook",
+  "vUSD",
+  "vETH",
+  "vBTC"
+]

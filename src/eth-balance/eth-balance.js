@@ -1,5 +1,5 @@
 const ethers = require('ethers');
-const { getJsonRpcUrl } = require('forta-agent');
+const { getJsonRpcUrl, Finding, FindingSeverity, FindingType } = require('forta-agent');
 
 // load required shared types
 const accounts = require('./accounts.json');
@@ -16,7 +16,7 @@ function createAlert(accountName, accountBalance) {
       name: 'Perp.Fi Account Balance Event',
       description: `The ${accountName} has a balance below ${accountBalance}`,
       alertId: 'AE-PERPFI-ACCOUNT-BALANCE-EVENT',
-      type: FindingType[eventType],  // What should this be?
+      //type: FindingType[eventType],  // What should this be?
       severity: FindingSeverity.Low,
       type: FindingType.Suspicious,
         protocol: 'Perp.Fi',
@@ -38,7 +38,8 @@ function provideHandleBlock(blockEvent) {
 
         // If balance < threshold add an alert to the findings
         if (accountBalance < accounts[accountName].threshold) {
-
+            // Alert on each item in parsedLogs
+                findings.push(createAlert(accountName, accountBalance));
         }
     }));
 

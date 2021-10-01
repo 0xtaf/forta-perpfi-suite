@@ -1,4 +1,14 @@
 const ownershipChange = require('./ownership-change/ownership-change');
+const ethBalance = require('./eth-balance/eth-balance');
+
+const handleBlock = async (blockEvent) => {
+  const findings = (
+    await Promise.all([
+      ethBalance.handleBlock(blockEvent),
+    ])
+  ).flat();
+  return findings;
+};
 
 const handleTransaction = async (txEvent) => {
   const findings = (
@@ -10,5 +20,6 @@ const handleTransaction = async (txEvent) => {
 };
 
 module.exports = {
-  handleTransaction,
+  handleBlock,
+  //handleTransaction,
 };

@@ -16,7 +16,6 @@ function createAlert(accountName, accountBalance, threshold) {
       name: 'Perp.Fi Account Balance Event',
       description: `The ${accountName} has a balance below ${threshold}`,
       alertId: 'AE-PERPFI-ACCOUNT-BALANCE-EVENT',
-      //type: FindingType[eventType],  // What should this be?
       severity: FindingSeverity.Low,
       type: FindingType.Suspicious,
         protocol: 'Perp.Fi',
@@ -29,20 +28,19 @@ function createAlert(accountName, accountBalance, threshold) {
   }
 
 function provideHandleBlock(blockEvent) {
-
   return async function handleBlock(blockEvent) {
     const findings = [];
 
     await Promise.all(accountNames.map(async (accountName) => {
-        const accountBalance = await provider.getBalance(accounts[accountName].address);
-        console.log('--------------------------------------------------------');
-        console.log(accountName + " balance: " + accountBalance + " threshold: " + accounts[accountName].threshold);
+      const accountBalance = await provider.getBalance(accounts[accountName].address);
+      console.log('--------------------------------------------------------');
+      console.log(accountName + " balance: " + accountBalance + " threshold: " + accounts[accountName].threshold);
 
-        // If balance < threshold add an alert to the findings
-        if (accountBalance < accounts[accountName].threshold) {
-            // Alert on each item in parsedLogs
-            findings.push(createAlert(accountName, accountBalance, accounts[accountName].threshold));
-        }
+      // If balance < threshold add an alert to the findings
+      if (accountBalance < accounts[accountName].threshold) {
+        // Alert on each item in parsedLogs
+        findings.push(createAlert(accountName, accountBalance, accounts[accountName].threshold));
+      }
     }));
 
      return findings;
@@ -51,6 +49,7 @@ function provideHandleBlock(blockEvent) {
 
 // exports
 module.exports = {
+  createAlert,
   provideHandleBlock,
   handleBlock: provideHandleBlock(),
 };

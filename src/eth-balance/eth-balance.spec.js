@@ -1,4 +1,3 @@
-const ethers = require('ethers');
 const { createBlockEvent } = require('forta-agent');
 
 const { createAlert, provideHandleBlock } = require('./eth-balance');
@@ -6,14 +5,11 @@ const { createAlert, provideHandleBlock } = require('./eth-balance');
 // Tests
 describe('eth balance monitoring', () => {
   describe('handleBlock', () => {
-    it('returns empty findings if balance is greater than threshold of 3 ETH', async () => {
+    it('Test if all account balances are greater than 3 ETH threshold', async () => {
       // mock the provider to return values greater than threshold
-      mockProvider = {
-        getBalance: jest.fn(() => Promise.resolve(
-          4000000000000000000,
-        )),
+      const mockProvider = {
+        getBalance: jest.fn(() => Promise.resolve(4000000000000000000)),
       };
-
 
       // Build Block Event
       const blockEvent = createBlockEvent({
@@ -27,12 +23,10 @@ describe('eth balance monitoring', () => {
       expect(findings).toStrictEqual([]);
     });
 
-    it('returns a finding if balance is less than threshold', async () => {
+    it('Test if all account balances are less than 3 ETH threshold', async () => {
       // mock the provider to return values less than threshold
-      mockProvider = {
-        getBalance: jest.fn(() => Promise.resolve(
-          4,
-        )),
+      const mockProvider = {
+        getBalance: jest.fn(() => Promise.resolve(4)),
       };
 
       // Build Block Event
@@ -48,7 +42,35 @@ describe('eth balance monitoring', () => {
         createAlert('maker', 4, 3000000000000000000),
         createAlert('arbitrageur', 4, 3000000000000000000),
         createAlert('cancel-order-keeper', 4, 3000000000000000000),
-        createAlert('liquidator', 4, 3000000000000000000)
+        createAlert('liquidator', 4, 3000000000000000000),
+      ];
+
+      expect(findings).toStrictEqual(alerts);
+    });
+
+    it('Test if only maker account balance is greater than 3 ETH threshold', async () => {
+      // mock the provider to return values less than threshold if the maker account
+      const mockProvider = {
+        getBalance: jest.fn((accountAddress) => {
+          // If this is the maker account, return 4 so it fires an alert
+          if (accountAddress === '0x2E8f9B6294aAdef4CE2Fc5acf78cbc04396240EA') {
+            return Promise.resolve(4);
+          }
+          return Promise.resolve(4000000000000000000);
+        }),
+      };
+
+      // Build Block Event
+      const blockEvent = createBlockEvent({
+      });
+
+      // Run agent
+      const handleBlock = provideHandleBlock(mockProvider);
+      const findings = await handleBlock(blockEvent);
+
+      // Assertions
+      const alerts = [
+        createAlert('maker', 4, 3000000000000000000),
       ];
 
       expect(findings).toStrictEqual(alerts);

@@ -27,14 +27,16 @@ function createAlert(accountName, accountBalance, threshold) {
     });
   }
 
-function provideHandleBlock(blockEvent) {
+function provideHandleBlock(providerObject) {
   return async function handleBlock(blockEvent) {
     const findings = [];
+    console.log('--------------------------------------------------------');
+    console.log('providerObject: ' + providerObject);
 
     await Promise.all(accountNames.map(async (accountName) => {
-      const accountBalance = await provider.getBalance(accounts[accountName].address);
-      console.log('--------------------------------------------------------');
+      const accountBalance = await providerObject.getBalance(accounts[accountName].address);
       console.log(accountName + " balance: " + accountBalance + " threshold: " + accounts[accountName].threshold);
+      console.log('--------------------------------------------------------');
 
       // If balance < threshold add an alert to the findings
       if (accountBalance < accounts[accountName].threshold) {
@@ -51,5 +53,5 @@ function provideHandleBlock(blockEvent) {
 module.exports = {
   createAlert,
   provideHandleBlock,
-  handleBlock: provideHandleBlock(),
+  handleBlock: provideHandleBlock(provider),
 };

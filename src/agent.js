@@ -21,5 +21,5 @@ const handleTransaction = async (txEvent) => {
 
 module.exports = {
   handleBlock,
-  // handleTransaction,
+  handleTransaction,
 };

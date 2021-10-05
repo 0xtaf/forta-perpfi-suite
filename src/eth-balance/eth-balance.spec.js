@@ -5,7 +5,7 @@ const { createAlert, provideHandleBlock } = require('./eth-balance');
 // Tests
 describe('eth balance monitoring', () => {
   describe('handleBlock', () => {
-    it('Test if all account balances are greater than 3 ETH threshold', async () => {
+    it('Test when all account balances are greater than 3 ETH threshold', async () => {
       // mock the provider to return values greater than threshold
       const mockProvider = {
         getBalance: jest.fn(() => Promise.resolve(4000000000000000000)),
@@ -23,7 +23,7 @@ describe('eth balance monitoring', () => {
       expect(findings).toStrictEqual([]);
     });
 
-    it('Test if all account balances are less than 3 ETH threshold', async () => {
+    it('Test when all account balances are less than 3 ETH threshold', async () => {
       // mock the provider to return values less than threshold
       const mockProvider = {
         getBalance: jest.fn(() => Promise.resolve(4)),
@@ -48,7 +48,7 @@ describe('eth balance monitoring', () => {
       expect(findings).toStrictEqual(alerts);
     });
 
-    it('Test if only maker account balance is greater than 3 ETH threshold', async () => {
+    it('Test when only maker account balance is greater than 3 ETH threshold', async () => {
       // mock the provider to return values less than threshold if the maker account
       const mockProvider = {
         getBalance: jest.fn((accountAddress) => {

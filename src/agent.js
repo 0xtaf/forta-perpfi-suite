@@ -13,7 +13,8 @@ const handleBlock = async (blockEvent) => {
 const handleTransaction = async (txEvent) => {
   const findings = (
     await Promise.all([
-      ownershipChange.handleTransaction(txEvent),
+      // add handleTransaction from handlers
+      // exampleHandler.handleTransaction(txEvent),
     ])
   ).flat();
   return findings;

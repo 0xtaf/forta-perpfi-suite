@@ -1,12 +1,11 @@
 # Forta Perp.Fi Suite
-Forta agent suite to monitor Perpetual Finance.
 
 ## Description
 
 This agent monitors various aspects of Perpetual Finance (Perp.Fi).  The Perp.Fi suite currently contains
 the following handlers:
 
-- ownership-change
+- eth-balance
 
 ## Supported Chains
 
@@ -14,11 +13,12 @@ the following handlers:
 
 ## Alerts
 
-- AE-PERPFI-ADMIN-EVENT
-  - Fired when a transaction log contains an OwnershipTransferred event for specific Perp.Fi contracts
+- AE-PERPFI-ACCOUNT-BALANCE-EVENT
+  - Fired when an account in accounts.json has a balance lower than the threshold set in accounts.json
   - Severity is always set to "low"
   - Type is always set to "suspicious"
-  - Metadata field contains Perp.Fi contract name, contract address, event name, and new owner
+  - Metadata field contains account name, account balance and threshold
+
 
 ## Test Data
 

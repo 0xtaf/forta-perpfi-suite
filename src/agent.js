@@ -1,12 +1,8 @@
 // transaction handlers
-// <none>
-
-// block handlers
-// <none>
+const pendingTransactions = require('./pending-transactions/pending-transactions');
 
 const txHandlers = [
-  // list txHandlers like this `optimisticOracle,` +++++ REMOVE ME +++++
-  // <none>
+  pendingTransactions,
 ];
 
 const blockHandlers = [

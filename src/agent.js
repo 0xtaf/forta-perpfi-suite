@@ -12,7 +12,8 @@ const blockHandlers = [
   // <none>
 ];
 
-// returns findings over all txHandler's handleTransaction functions
+
+// returns findings over all txHandlers' handleTransaction functions
 function provideHandleTransaction(agents) {
   return async function handleTransaction(txEvent) {
     const findings = (
@@ -25,7 +26,7 @@ function provideHandleTransaction(agents) {
   };
 }
 
-// returns findings over all blockHandler's handleBlock functions
+// returns findings over all blockHandlers' handleBlock functions
 function provideHandleBlock(agents) {
   return async function handleBlock(blockEvent) {
     const findings = (

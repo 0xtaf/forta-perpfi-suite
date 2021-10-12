@@ -9,8 +9,8 @@ const { perpfiEverestId } = require('../../agent-config.json');
 // load the contract names that we would like to monitor
 const contractNames = require('./contracts-to-monitor.json');
 
-// load the contract addresses, abis, and ethers interfaces
-const contractAddressesAbis = common.getContractAddressesAbis(contractNames);
+// set up a variable to hold initialization data used in the handler
+const initializeData = {};
 
 // helper function to create alerts
 function createAlert(log, eventName, contractName, contractAddress) {
@@ -47,21 +47,34 @@ function filterAndParseLogs(logs, contractData) {
   return parsedLogs;
 }
 
-async function handleTransaction(txEvent) {
-  const findings = [];
+function provideInitialize(data) {
+  return async function initialize() {
+    // load the contract addresses, abis, and ethers interfaces
+    // eslint-disable-next-line no-param-reassign
+    data.addressesAbis = common.getContractAddressesAbis(contractNames);
+  };
+}
 
-  const { logs } = txEvent;
+function provideHandleTransaction(data) {
+  return async function handleTransaction(txEvent) {
+    const findings = [];
 
-  contractAddressesAbis.forEach((contractData) => {
-    const parsedLogs = filterAndParseLogs(logs, contractData);
-    parsedLogs.forEach((log) => {
-      findings.push(createAlert(log, log.name, contractData.name, contractData.address));
+    const { logs } = txEvent;
+
+    data.addressesAbis.forEach((contractData) => {
+      const parsedLogs = filterAndParseLogs(logs, contractData);
+      parsedLogs.forEach((log) => {
+        findings.push(createAlert(log, log.name, contractData.name, contractData.address));
+      });
     });
-  });
-  return findings;
+    return findings;
+  };
 }
 
 module.exports = {
-  handleTransaction,
+  provideInitialize,
+  initialize: provideInitialize(initializeData),
+  provideHandleTransaction,
+  handleTransaction: provideHandleTransaction(initializeData),
   createAlert,
 };

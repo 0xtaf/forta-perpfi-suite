@@ -25,8 +25,7 @@ function getContractAddressesAbis(contractNames) {
     } else if (baseTokens.indexOf(contractName) !== -1) {
       if (contractName === 'vUSD') {
         address = protocolData.contracts.QuoteToken.address.toLowerCase();
-      }
-      else {
+      } else {
         address = protocolData.contracts[contractName].address.toLowerCase();
       }
       // eslint-disable-next-line global-require,import/no-dynamic-require

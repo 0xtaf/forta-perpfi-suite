@@ -7,6 +7,7 @@ const { handleTransaction, createAlert } = require('./ownership-change');
 
 // create constants to test the handler with
 const protocolData = require('../../protocol-data.json');
+
 const contractName = 'ClearingHouse';
 const clearingHouseAddress = protocolData.contracts[contractName].address.toLowerCase();
 

@@ -1,56 +1,16 @@
-const ethers = require('ethers');
 const { Finding, FindingSeverity, FindingType } = require('forta-agent');
 
-// load the UniswapV3Factory abi
-const {
-  abi: uniswapV3FactoryAbi,
-} = require('@uniswap/v3-core/artifacts/contracts/UniswapV3Factory.sol/UniswapV3Factory.json');
-const protocolData = require('../../protocol-data.json');
-
-const baseTokens = ['vUSD', 'vBTC', 'vETH'];
+// load the module containing commonly used helper functions for Perpetual Finance
+const common = require('../common');
 
 // load any agent configuration parameters
 const { perpfiEverestId } = require('../../agent-config.json');
 
-// load the contracts that we would like to monitor
+// load the contract names that we would like to monitor
 const contractNames = require('./contracts-to-monitor.json');
 
-// iterate over the contracts to get their addresses, abis, and create ethers interfaces
-const contractAddressesAbis = [];
-contractNames.forEach((contractName) => {
-  let address;
-  let contractAbi;
-  // get the contract address and abi
-  if (contractName === 'UniswapV3Factory') {
-    address = protocolData.externalContracts.UniswapV3Factory.toLowerCase();
-    contractAbi = uniswapV3FactoryAbi;
-  } else if (baseTokens.indexOf(contractName) !== -1) {
-    if (contractName === 'vUSD') {
-      address = protocolData.pools[0].quoteAddress.toLowerCase();
-    }
-    else {
-      address = protocolData.contracts[contractName].address.toLowerCase();
-    }
-    // eslint-disable-next-line global-require,import/no-dynamic-require
-    const { abi } = require('../../abis/BaseToken.json');
-    contractAbi = abi;
-  } else {
-    address = protocolData.contracts[contractName].address.toLowerCase();
-    // eslint-disable-next-line global-require,import/no-dynamic-require
-    const { abi } = require(`../../abis/${contractName}.json`);
-    contractAbi = abi;
-  }
-
-  const iface = new ethers.utils.Interface(contractAbi);
-
-  // add a key/value pair for the contract name and address
-  contractAddressesAbis.push({
-    name: contractName,
-    address,
-    contractAbi,
-    iface,
-  });
-});
+// load the contract addresses, abis, and ethers interfaces
+const contractAddressesAbis = common.getContractAddressesAbis(contractNames);
 
 // helper function to create alerts
 function createAlert(log, eventName, contractName, contractAddress) {
@@ -67,7 +27,7 @@ function createAlert(log, eventName, contractName, contractAddress) {
     description: `The ${eventName} event was emitted by the ${contractName} contract`,
     alertId: 'AE-PERPFI-OWNER-CHANGED-EVENT',
     protocol: 'Perp.Fi',
-    severity: FindingSeverity.Low,
+    severity: FindingSeverity.High,
     type: FindingType.Suspicious,
     everestId: perpfiEverestId,
     metadata,

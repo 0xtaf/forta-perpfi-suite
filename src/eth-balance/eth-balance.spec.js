@@ -12,8 +12,7 @@ describe('eth balance monitoring', () => {
       };
 
       // Build Block Event
-      const blockEvent = createBlockEvent({
-      });
+      const blockEvent = createBlockEvent({});
 
       // Run agent
       const handleBlock = provideHandleBlock(mockProvider);
@@ -30,8 +29,7 @@ describe('eth balance monitoring', () => {
       };
 
       // Build Block Event
-      const blockEvent = createBlockEvent({
-      });
+      const blockEvent = createBlockEvent({});
 
       // Run agent
       const handleBlock = provideHandleBlock(mockProvider);
@@ -61,8 +59,7 @@ describe('eth balance monitoring', () => {
       };
 
       // Build Block Event
-      const blockEvent = createBlockEvent({
-      });
+      const blockEvent = createBlockEvent({});
 
       // Run agent
       const handleBlock = provideHandleBlock(mockProvider);

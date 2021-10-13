@@ -18,8 +18,8 @@ function createAlert(accountName, accountBalance, threshold) {
     name: 'Perp.Fi Account Balance Event',
     description: `The ${accountName} account has a balance below ${threshold}`,
     alertId: 'AE-PERPFI-ACCOUNT-BALANCE-EVENT',
-    severity: FindingSeverity.Low,
-    type: FindingType.Suspicious,
+    severity: FindingSeverity.Medium,
+    type: FindingType.Degraded,
     protocol: 'Perp.Fi',
     metadata: {
       accountName,

@@ -82,9 +82,9 @@ describe('account balance monitoring', () => {
       // mock the provider to return values less than threshold if the maker account
       const mockProvider = {
         getBalance: jest.fn((accountAddress) => {
-          // If this is the maker account, return 4 so it fires an alert
+          // If this is the maker account, return 2900000000000000000 so it fires an alert
           if (accountAddress === '0') {
-            return Promise.resolve(4);
+            return Promise.resolve(2900000000000000000);
           }
           return Promise.resolve(4000000000000000000);
         }),
@@ -100,7 +100,7 @@ describe('account balance monitoring', () => {
 
       // Assertions
       const alerts = [
-        createAlert('maker', 4, 3),
+        createAlert('maker', 2900000000000000000, 3),
       ];
 
       expect(findings).toStrictEqual(alerts);

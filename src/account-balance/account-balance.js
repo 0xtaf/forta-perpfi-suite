@@ -15,12 +15,11 @@ function provideInitialize(data) {
     const accountNames = Object.keys(accounts);
     const provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
 
-    // eslint-disable-next-line no-param-reassign
+    /* eslint-disable no-param-reassign */
     data.accounts = accounts;
-    // eslint-disable-next-line no-param-reassign
     data.accountNames = accountNames;
-    // eslint-disable-next-line no-param-reassign
     data.provider = provider;
+    /* eslint-enable no-param-reassign */
   };
 }
 

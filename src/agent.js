@@ -5,7 +5,6 @@
 const accountBalance = require('./account-balance/account-balance');
 
 const txHandlers = [
-  // list txHandlers like this `optimisticOracle,` +++++ REMOVE ME +++++
   // <none>
 ];
 

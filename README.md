@@ -5,7 +5,7 @@
 This agent monitors various aspects of Perpetual Finance (Perp.Fi).  The Perp.Fi suite currently contains
 the following handlers:
 
-- eth-balance
+- account-balance
 
 ## Supported Chains
 

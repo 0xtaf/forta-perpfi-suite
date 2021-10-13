@@ -37,10 +37,10 @@ describe('eth balance monitoring', () => {
 
       // Assertions
       const alerts = [
-        createAlert('maker', 4, 3000000000000000000),
-        createAlert('arbitrageur', 4, 3000000000000000000),
-        createAlert('cancel-order-keeper', 4, 3000000000000000000),
-        createAlert('liquidator', 4, 3000000000000000000),
+        createAlert('maker', 4, 3),
+        createAlert('arbitrageur', 4, 3),
+        createAlert('cancel-order-keeper', 4, 3),
+        createAlert('liquidator', 4, 3),
       ];
 
       expect(findings).toStrictEqual(alerts);
@@ -67,7 +67,7 @@ describe('eth balance monitoring', () => {
 
       // Assertions
       const alerts = [
-        createAlert('maker', 4, 3000000000000000000),
+        createAlert('maker', 4, 3),
       ];
 
       expect(findings).toStrictEqual(alerts);

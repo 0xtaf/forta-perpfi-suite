@@ -16,7 +16,7 @@ const provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
 function createAlert(accountName, accountBalance, threshold) {
   return Finding.fromObject({
     name: 'Perp.Fi Account Balance Event',
-    description: `The ${accountName} account has a balance below ${threshold}`,
+    description: `The ${accountName} account has a balance below ${threshold} ETH`,
     alertId: 'AE-PERPFI-ACCOUNT-BALANCE-EVENT',
     severity: FindingSeverity.Medium,
     type: FindingType.Degraded,
@@ -38,7 +38,7 @@ function provideHandleBlock(providerObject) {
       const accountBalance = await providerObject.getBalance(accounts[accountName].address);
 
       // If balance < threshold add an alert to the findings
-      if (accountBalance < accounts[accountName].threshold) {
+      if (accountBalance < (accounts[accountName].threshold * 1000000000000000000)) {
         findings.push(createAlert(accountName, accountBalance, accounts[accountName].threshold));
       }
     }));

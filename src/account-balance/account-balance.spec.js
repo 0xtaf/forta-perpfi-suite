@@ -1,6 +1,6 @@
 const { createBlockEvent } = require('forta-agent');
 
-const { createAlert, provideHandleBlock } = require('./eth-balance');
+const { createAlert, provideHandleBlock } = require('./account-balance');
 
 // Tests
 describe('eth balance monitoring', () => {

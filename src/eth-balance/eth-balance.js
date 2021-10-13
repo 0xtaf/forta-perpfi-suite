@@ -15,9 +15,9 @@ const provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
 // helper function to create alerts
 function createAlert(accountName, accountBalance, threshold) {
   return Finding.fromObject({
-    name: 'Perp.Fi Account Balance Event',
+    name: 'Perp.Fi Low Account Balance',
     description: `The ${accountName} account has a balance below ${threshold} ETH`,
-    alertId: 'AE-PERPFI-ACCOUNT-BALANCE-EVENT',
+    alertId: 'AE-PERPFI-LOW-ACCOUNT-BALANCE',
     severity: FindingSeverity.Medium,
     type: FindingType.Degraded,
     protocol: 'Perp.Fi',

@@ -16,6 +16,25 @@ describe('account balance monitoring', () => {
       handleBlock = provideHandleBlock(initializeData);
     });
 
+    const mockAccounts = {
+      maker: {
+        address: '0',
+        threshold: 3,
+      },
+      arbitrageur: {
+        address: '1',
+        threshold: 3,
+      },
+      'cancel-order-keeper': {
+        address: '2',
+        threshold: 3,
+      },
+      liquidator: {
+        address: '3',
+        threshold: 3,
+      },
+    };
+
     it('Test when all account balances are greater than the threshold', async () => {
       // mock the provider to return values greater than threshold
       const mockProvider = {
@@ -26,6 +45,7 @@ describe('account balance monitoring', () => {
       const blockEvent = createBlockEvent({});
 
       // Run agent
+      initializeData.accounts = mockAccounts;
       initializeData.provider = mockProvider;
       const findings = await handleBlock(blockEvent);
 
@@ -43,6 +63,7 @@ describe('account balance monitoring', () => {
       const blockEvent = createBlockEvent({});
 
       // Run agent
+      initializeData.accounts = mockAccounts;
       initializeData.provider = mockProvider;
       const findings = await handleBlock(blockEvent);
 
@@ -62,7 +83,7 @@ describe('account balance monitoring', () => {
       const mockProvider = {
         getBalance: jest.fn((accountAddress) => {
           // If this is the maker account, return 4 so it fires an alert
-          if (accountAddress === '0x2E8f9B6294aAdef4CE2Fc5acf78cbc04396240EA') {
+          if (accountAddress === '0') {
             return Promise.resolve(4);
           }
           return Promise.resolve(4000000000000000000);
@@ -73,6 +94,7 @@ describe('account balance monitoring', () => {
       const blockEvent = createBlockEvent({});
 
       // Run agent
+      initializeData.accounts = mockAccounts;
       initializeData.provider = mockProvider;
       const findings = await handleBlock(blockEvent);
 

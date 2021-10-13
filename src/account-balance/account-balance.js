@@ -3,14 +3,26 @@ const {
   getJsonRpcUrl, Finding, FindingSeverity, FindingType,
 } = require('forta-agent');
 
-// load required shared types
-const accounts = require('./accounts.json');
+const accountData = require('./accounts.json');
 
-// get account names
-const accountNames = Object.keys(accounts);
+// Stores information about each account
+const initializeData = {};
 
-// set up RPC provider
-const provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
+// Initializes data required for handler
+function provideInitialize(data) {
+  return async function initialize() {
+    const accounts = accountData;
+    const accountNames = Object.keys(accounts);
+    const provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
+
+    // eslint-disable-next-line no-param-reassign
+    data.accounts = accounts;
+    // eslint-disable-next-line no-param-reassign
+    data.accountNames = accountNames;
+    // eslint-disable-next-line no-param-reassign
+    data.provider = provider;
+  };
+}
 
 // helper function to create alerts
 function createAlert(accountName, accountBalance, threshold) {
@@ -29,13 +41,14 @@ function createAlert(accountName, accountBalance, threshold) {
   });
 }
 
-function provideHandleBlock(providerObject) {
-  // eslint-disable-next-line no-unused-vars
-  return async function handleBlock(blockEvent) {
+function provideHandleBlock(data) {
+  return async function handleBlock() {
     const findings = [];
+    const { accounts, accountNames, provider } = data;
+    if (!accounts) throw new Error('handleBlock called before initialization');
 
     await Promise.all(accountNames.map(async (accountName) => {
-      const accountBalance = await providerObject.getBalance(accounts[accountName].address);
+      const accountBalance = await provider.getBalance(accounts[accountName].address);
 
       // If balance < threshold add an alert to the findings
       if (accountBalance < (accounts[accountName].threshold * 1000000000000000000)) {
@@ -51,5 +64,7 @@ function provideHandleBlock(providerObject) {
 module.exports = {
   createAlert,
   provideHandleBlock,
-  handleBlock: provideHandleBlock(provider),
+  handleBlock: provideHandleBlock(initializeData),
+  provideInitialize,
+  initialize: provideInitialize(initializeData),
 };

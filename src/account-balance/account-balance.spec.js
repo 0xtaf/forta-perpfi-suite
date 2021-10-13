@@ -1,10 +1,21 @@
 const { createBlockEvent } = require('forta-agent');
 
-const { createAlert, provideHandleBlock } = require('./account-balance');
+const { createAlert, provideHandleBlock, provideInitialize } = require('./account-balance');
 
 // Tests
 describe('account balance monitoring', () => {
   describe('handleBlock', () => {
+    let initializeData;
+    let handleBlock;
+
+    beforeEach(async () => {
+      initializeData = {};
+
+      // Initialize the Handler
+      await (provideInitialize(initializeData))();
+      handleBlock = provideHandleBlock(initializeData);
+    });
+
     it('Test when all account balances are greater than the threshold', async () => {
       // mock the provider to return values greater than threshold
       const mockProvider = {
@@ -15,7 +26,7 @@ describe('account balance monitoring', () => {
       const blockEvent = createBlockEvent({});
 
       // Run agent
-      const handleBlock = provideHandleBlock(mockProvider);
+      initializeData.provider = mockProvider;
       const findings = await handleBlock(blockEvent);
 
       // Assertions
@@ -32,7 +43,7 @@ describe('account balance monitoring', () => {
       const blockEvent = createBlockEvent({});
 
       // Run agent
-      const handleBlock = provideHandleBlock(mockProvider);
+      initializeData.provider = mockProvider;
       const findings = await handleBlock(blockEvent);
 
       // Assertions
@@ -62,7 +73,7 @@ describe('account balance monitoring', () => {
       const blockEvent = createBlockEvent({});
 
       // Run agent
-      const handleBlock = provideHandleBlock(mockProvider);
+      initializeData.provider = mockProvider;
       const findings = await handleBlock(blockEvent);
 
       // Assertions

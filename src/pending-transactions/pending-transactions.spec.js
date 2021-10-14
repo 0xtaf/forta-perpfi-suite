@@ -34,24 +34,24 @@ describe('Perpetual Finance pending transaction agent', () => {
   let handleBlock;
   let data;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    // initialize the data structure
     data = {
       provider: {
         on: mockProviderOn,
       },
     };
+    initialize = provideInitialize(data);
+    await initialize();
+
+    // create the handler, which will set the variable 'callbackFunction' to the callback that
+    // 'provideHandleBlock' passes to provider.on()
+    handleBlock = provideHandleBlock(data);
+
   });
 
   describe('Pending transaction monitoring', () => {
     it('returns no findings for pending transactions received before first blockEvent', async () => {
-      // initialize the data structure
-      initialize = provideInitialize(data);
-      await initialize();
-
-      // create the handler, which will set the variable 'callbackFunction' to the callback that
-      // 'provideHandleBlock' passes to provider.on()
-      handleBlock = provideHandleBlock(data);
-
       // create and send a blockEvent to the handler to start its pending transaction processing
       const mockBlockEvent = createBlockEvent({
         block: {
@@ -80,13 +80,6 @@ describe('Perpetual Finance pending transaction agent', () => {
     });
 
     it('returns no findings if valid pending transactions occur outside time threshold', async () => {
-      // initialize the data structure
-      initialize = provideInitialize(data);
-      await initialize();
-
-      // create the handler
-      handleBlock = provideHandleBlock(data);
-
       // create and send a blockEvent to initialize processing of pending transactions
       const blockTimestampFirst = 1;
       let mockBlockEvent = createBlockEvent({
@@ -134,13 +127,6 @@ describe('Perpetual Finance pending transaction agent', () => {
     });
 
     it('returns findings for pending transactions that exceed the threshold within the time range', async () => {
-      // initialize the data structure
-      initialize = provideInitialize(data);
-      await initialize();
-
-      // create the handler
-      handleBlock = provideHandleBlock(data);
-
       // create and send a blockEvent to initialize processing of pending transactions
       let mockBlockEvent = createBlockEvent({
         block: {
@@ -189,13 +175,6 @@ describe('Perpetual Finance pending transaction agent', () => {
     });
 
     it('returns no findings if the address is not in our Array of addresses', async () => {
-      // initialize the data structure
-      initialize = provideInitialize(data);
-      await initialize();
-
-      // create the handler
-      handleBlock = provideHandleBlock(data);
-
       // create and send a blockEvent to initialize processing of pending transactions
       let mockBlockEvent = createBlockEvent({
         block: {

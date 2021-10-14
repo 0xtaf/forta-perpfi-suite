@@ -1,5 +1,4 @@
 {
-  "nanosecondsPerSecond": 1000000000,
   "timeWindowSeconds": 60,
   "txThreshold": 10
 }

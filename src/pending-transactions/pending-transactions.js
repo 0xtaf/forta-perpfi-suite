@@ -9,13 +9,12 @@ const { PERPFI_EVEREST_ID } = require('../../agent-config.json');
 
 // load agent specific constants
 const {
-  nanosecondsPerSecond,
   timeWindowSeconds,
   txThreshold: TX_THRESHOLD,
 } = require('./pending-transactions.json');
 
 // convert value to BigInt type
-const NANOSECONDS_PER_SECOND = BigInt(nanosecondsPerSecond);
+const NANOSECONDS_PER_SECOND = BigInt(1e9);
 const TIME_WINDOW_SECONDS = BigInt(timeWindowSeconds);
 
 // helper function to create alerts

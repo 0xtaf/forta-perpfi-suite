@@ -3,9 +3,8 @@ const {
   getJsonRpcUrl, Finding, FindingSeverity, FindingType,
 } = require('forta-agent');
 
-const accountData = require('./account-balance.json');
 const accountAddressesData = require('../../account-addresses.json');
-const { PERPFI_EVEREST_ID } = require('../../agent-config.json');
+const { PERPFI_EVEREST_ID, accountBalance: accountData } = require('../../agent-config.json');
 
 // Stores information about each account
 const initializeData = {};
@@ -24,7 +23,7 @@ function provideInitialize(data) {
 
 // helper function to create alerts
 function createAlert(accountName, accountBalance, thresholdEth) {
-  const threshold = thresholdEth * 1000000000000000000;
+  const threshold = ethers.utils.parseEther(thresholdEth.toString());
   return Finding.fromObject({
     name: 'Perp.Fi Low Account Balance',
     description: `The ${accountName} account has a balance below ${thresholdEth} ETH`,
@@ -35,8 +34,8 @@ function createAlert(accountName, accountBalance, thresholdEth) {
     everestId: PERPFI_EVEREST_ID,
     metadata: {
       accountName,
-      accountBalance,
-      threshold,
+      accountBalance: accountBalance.toString(),
+      threshold: threshold.toString(),
     },
   });
 }

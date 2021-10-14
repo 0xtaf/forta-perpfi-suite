@@ -1,11 +1,11 @@
 // transaction handlers
-// <none>
+const adminEvents = require('./admin-events/admin-events');
 
 // block handlers
 const accountBalance = require('./account-balance/account-balance');
 
 const txHandlers = [
-  // <none>
+  adminEvents,
 ];
 
 const blockHandlers = [

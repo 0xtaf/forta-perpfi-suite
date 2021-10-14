@@ -2,14 +2,14 @@
 const adminEvents = require('./admin-events/admin-events');
 
 // block handlers
-// <none>
+const accountBalance = require('./account-balance/account-balance');
 
 const txHandlers = [
   adminEvents,
 ];
 
 const blockHandlers = [
-  // <none>
+  accountBalance,
 ];
 
 // returns findings over all txHandler's handleTransaction functions

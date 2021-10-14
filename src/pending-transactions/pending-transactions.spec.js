@@ -19,43 +19,38 @@ function mockProviderOn(blockTagString, callback) {
   callbackFunction = callback;
 }
 
-// mock the ethers.Provider object
-jest.mock('./agent-setup', () => ({
-  ...jest.requireActual('./agent-setup'),
-  provider: {
-    on: mockProviderOn,
-  },
-}));
-
-// import the real createAlert function and the mocked provider object
-const { provider, createAlert } = require('./agent-setup');
-
 // load account addresses that will be monitored by the handler
 const accountAddresses = require('../../account-addresses.json');
 
 // now that the ethers.Provider constructor has been mocked, import the handler under test
-const {
-  pendingTransactions,
+const { 
+  createAlert,
   provideHandleBlock,
-  accountPendingTx,
+  provideInitialize,
 } = require('./pending-transactions');
 
 describe('Perpetual Finance pending transaction agent', () => {
+  let initialize;
   let handleBlock;
+  let data;
 
-  // clear out any existing transactions in the accountPendingTx object
   beforeEach(() => {
-    (Object.keys(accountAddresses)).forEach((name) => {
-      const address = accountAddresses[name];
-      accountPendingTx[address].transactions = [];
-    });
+    data = {
+      provider: {
+        on: mockProviderOn,
+      },
+    };
   });
 
   describe('Pending transaction monitoring', () => {
     it('returns no findings for pending transactions received before first blockEvent', async () => {
+      // initialize the data structure
+      initialize = provideInitialize(data);
+      await initialize();
+
       // create the handler, which will set the variable 'callbackFunction' to the callback that
       // 'provideHandleBlock' passes to provider.on()
-      handleBlock = provideHandleBlock(provider);
+      handleBlock = provideHandleBlock(data);
 
       // create and send a blockEvent to the handler to start its pending transaction processing
       const mockBlockEvent = createBlockEvent({
@@ -81,12 +76,16 @@ describe('Perpetual Finance pending transaction agent', () => {
       expect(findings).toStrictEqual([]);
 
       // there should be no pending transactions in the Array
-      expect(pendingTransactions).toStrictEqual([]);
+      expect(data.pendingTransactions).toStrictEqual([]);
     });
 
     it('returns no findings if valid pending transactions occur outside time threshold', async () => {
+      // initialize the data structure
+      initialize = provideInitialize(data);
+      await initialize();
+
       // create the handler
-      handleBlock = provideHandleBlock(provider);
+      handleBlock = provideHandleBlock(data);
 
       // create and send a blockEvent to initialize processing of pending transactions
       const blockTimestampFirst = 1;
@@ -135,8 +134,12 @@ describe('Perpetual Finance pending transaction agent', () => {
     });
 
     it('returns findings for pending transactions that exceed the threshold within the time range', async () => {
+      // initialize the data structure
+      initialize = provideInitialize(data);
+      await initialize();
+
       // create the handler
-      handleBlock = provideHandleBlock(provider);
+      handleBlock = provideHandleBlock(data);
 
       // create and send a blockEvent to initialize processing of pending transactions
       let mockBlockEvent = createBlockEvent({
@@ -186,8 +189,12 @@ describe('Perpetual Finance pending transaction agent', () => {
     });
 
     it('returns no findings if the address is not in our Array of addresses', async () => {
+      // initialize the data structure
+      initialize = provideInitialize(data);
+      await initialize();
+
       // create the handler
-      handleBlock = provideHandleBlock(provider);
+      handleBlock = provideHandleBlock(data);
 
       // create and send a blockEvent to initialize processing of pending transactions
       let mockBlockEvent = createBlockEvent({

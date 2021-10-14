@@ -68,10 +68,12 @@ function provideInitialize(data) {
     data.startTime = process.hrtime.bigint();
 
     // set up an ethers provider to retrieve pending blocks
-    const provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
+    if (!data.provider) {
+      data.provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
+    }
 
     // register a function with the ethers provider to count pending transactions as they occur
-    provider.on('pending', (tx) => {
+    data.provider.on('pending', (tx) => {
       // this function will execute whenever the JSON-RPC provider sends a pending transaction
       if (data.blockTimestamp !== 0) {
         const deltaTime = (process.hrtime.bigint() - data.startTime) / NANOSECONDS_PER_SECOND;
@@ -92,7 +94,7 @@ function provideHandleBlock(data) {
     // get the Array of transaction hashes that were processed as part of this block
     // these transaction hashes will be checked against our Array of pending transactions to remove
     // any that have been successfully processed
-    const { blockTxs } = blockEvent.block;
+    const { transactions: blockTxs } = blockEvent.block;
 
     // update the timestamp with each block that arrives
     // the block timestamp will be set with each new blockEvent
@@ -161,6 +163,7 @@ function provideHandleBlock(data) {
 }
 
 module.exports = {
+  createAlert,
   provideHandleBlock,
   handleBlock: provideHandleBlock(initializeData),
   provideInitialize,

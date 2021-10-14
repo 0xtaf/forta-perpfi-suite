@@ -3,9 +3,8 @@ const {
   getJsonRpcUrl, Finding, FindingSeverity, FindingType,
 } = require('forta-agent');
 
-const accountData = require('./account-balance.json');
 const accountAddressesData = require('../../account-addresses.json');
-const { PERPFI_EVEREST_ID } = require('../../agent-config.json');
+const { PERPFI_EVEREST_ID, accountBalance: accountData } = require('../../agent-config.json');
 
 // Stores information about each account
 const initializeData = {};

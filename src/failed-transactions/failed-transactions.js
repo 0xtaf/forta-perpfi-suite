@@ -79,7 +79,7 @@ function provideInitialize(data) {
     Object.assign(data, config.failedTransactions);
     data.blockWindow = config.failedTransactions.blockWindow;
     data.failedTxLimit = config.failedTransactions.failedTxLimit;
-    data.everestId = config.perpfiEverestId;
+    data.everestId = config.PERPFI_EVEREST_ID;
     /* eslint-enable no-param-reassign */
   };
 }

@@ -1,16 +1,17 @@
 // transaction handlers
+const adminEvents = require('./admin-events/admin-events');
 const failedTransactions = require('./failed-transactions/failed-transactions');
 
 // block handlers
-// <none>
+const accountBalance = require('./account-balance/account-balance');
 
 const txHandlers = [
-  // list txHandlers like this `optimisticOracle,` +++++ REMOVE ME +++++
+  adminEvents,
   failedTransactions,
 ];
 
 const blockHandlers = [
-  // <none>
+  accountBalance,
 ];
 
 // returns findings over all txHandler's handleTransaction functions

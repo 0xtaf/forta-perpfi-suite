@@ -8,27 +8,30 @@ describe('account balance monitoring', () => {
     let initializeData;
     let handleBlock;
 
+    const mockThresholds = {
+      maker: 3,
+      arbitrageur: 3,
+      cancelOrderKeeper: 3,
+      liquidator: 3,
+    };
+
+    const mockAddresses = {
+      maker: '0',
+      arbitrageur: '1',
+      cancelOrderKeeper: '2',
+      liquidator: '3',
+    };
+
     beforeEach(async () => {
       initializeData = {};
 
       // Initialize the Handler
       await (provideInitialize(initializeData))();
+      initializeData.accountThresholds = mockThresholds;
+      initializeData.accountAddresses = mockAddresses;
+
       handleBlock = provideHandleBlock(initializeData);
     });
-
-    const mockThresholds = {
-      "maker": 3,
-      "arbitrageur": 3,
-      "cancel-order-keeper": 3,
-      "liquidator": 3
-    };
-
-    const mockAddresses = {
-      "maker": "0",
-      "arbitrageur": "1",
-      "cancel-order-keeper": "2",
-      "liquidator": "3"
-    };
 
     it('Test when all account balances are greater than the threshold', async () => {
       // mock the provider to return values greater than threshold
@@ -36,13 +39,12 @@ describe('account balance monitoring', () => {
         getBalance: jest.fn(() => Promise.resolve(4000000000000000000)),
       };
 
+      initializeData.provider = mockProvider;
+
       // Build Block Event
       const blockEvent = createBlockEvent({});
 
       // Run agent
-      initializeData.accountThresholds = mockThresholds;
-      initializeData.accountAddresses = mockAddresses;
-      initializeData.provider = mockProvider;
       const findings = await handleBlock(blockEvent);
 
       // Assertions
@@ -55,20 +57,19 @@ describe('account balance monitoring', () => {
         getBalance: jest.fn(() => Promise.resolve(4)),
       };
 
+      initializeData.provider = mockProvider;
+
       // Build Block Event
       const blockEvent = createBlockEvent({});
 
       // Run agent
-      initializeData.accountThresholds = mockThresholds;
-      initializeData.accountAddresses = mockAddresses;
-      initializeData.provider = mockProvider;
       const findings = await handleBlock(blockEvent);
 
       // Assertions
       const alerts = [
         createAlert('maker', 4, mockThresholds.maker),
         createAlert('arbitrageur', 4, mockThresholds.arbitrageur),
-        createAlert('cancel-order-keeper', 4, mockThresholds['cancel-order-keeper']),
+        createAlert('cancelOrderKeeper', 4, mockThresholds.cancelOrderKeeper),
         createAlert('liquidator', 4, mockThresholds.liquidator),
       ];
 
@@ -87,13 +88,12 @@ describe('account balance monitoring', () => {
         }),
       };
 
+      initializeData.provider = mockProvider;
+
       // Build Block Event
       const blockEvent = createBlockEvent({});
 
       // Run agent
-      initializeData.accountThresholds = mockThresholds;
-      initializeData.accountAddresses = mockAddresses;
-      initializeData.provider = mockProvider;
       const findings = await handleBlock(blockEvent);
 
       // Assertions

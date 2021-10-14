@@ -5,6 +5,7 @@ const {
 
 const accountData = require('./account-balance.json');
 const accountAddressesData = require('../../account-addresses.json');
+const { PERPFI_EVEREST_ID } = require('../../agent-config.json');
 
 // Stores information about each account
 const initializeData = {};
@@ -31,6 +32,7 @@ function createAlert(accountName, accountBalance, thresholdEth) {
     severity: FindingSeverity.Medium,
     type: FindingType.Degraded,
     protocol: 'Perp.Fi',
+    everestId: PERPFI_EVEREST_ID,
     metadata: {
       accountName,
       accountBalance,
@@ -42,8 +44,12 @@ function createAlert(accountName, accountBalance, thresholdEth) {
 function provideHandleBlock(data) {
   return async function handleBlock() {
     const findings = [];
-    const { accountThresholds, accountAddresses, accountNames, provider } = data;
-    if (!accountThresholds) throw new Error('handleBlock called before initialization');
+    const {
+      accountThresholds, accountAddresses, accountNames, provider,
+    } = data;
+    if (!accountThresholds) {
+      throw new Error('handleBlock called before initialization');
+    }
 
     await Promise.all(accountNames.map(async (accountName) => {
       const accountBalance = await provider.getBalance(accountAddresses[accountName]);

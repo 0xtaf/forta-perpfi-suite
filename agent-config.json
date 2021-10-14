@@ -1,3 +1,7 @@
 {
+  "pendingTransactions": {
+    "timeWindowSeconds": 60,
+    "txThreshold": 10
+  },
   "PERPFI_EVEREST_ID": "0xb0b67f51aee86a23574868bf08622c4bddb4ce12"
 }

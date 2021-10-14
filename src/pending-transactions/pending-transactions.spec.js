@@ -2,9 +2,11 @@ const { createBlockEvent } = require('forta-agent');
 
 // load agent specific constants
 const {
-  txThreshold: TX_THRESHOLD,
-  timeWindowSeconds,
-} = require('./pending-transactions.json');
+  pendingTransactions: {
+    timeWindowSeconds,
+    txThreshold: TX_THRESHOLD,
+  }
+} = require('../../agent-config.json');
 
 const TIME_WINDOW_SECONDS = BigInt(timeWindowSeconds);
 

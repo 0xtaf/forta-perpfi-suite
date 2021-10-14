@@ -2,15 +2,14 @@
 // <none>
 
 // block handlers
-// <none>
+const accountBalance = require('./account-balance/account-balance');
 
 const txHandlers = [
-  // list txHandlers like this `optimisticOracle,` +++++ REMOVE ME +++++
   // <none>
 ];
 
 const blockHandlers = [
-  // <none>
+  accountBalance,
 ];
 
 // returns findings over all txHandler's handleTransaction functions

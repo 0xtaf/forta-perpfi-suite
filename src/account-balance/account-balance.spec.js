@@ -69,17 +69,17 @@ describe('account balance monitoring', () => {
 
       // Assertions
       const alerts = [
-        createAlert('maker', 4, 3),
-        createAlert('arbitrageur', 4, 3),
-        createAlert('cancel-order-keeper', 4, 3),
-        createAlert('liquidator', 4, 3),
+        createAlert('maker', 4, mockAccounts['maker'].threshold),
+        createAlert('arbitrageur', 4, mockAccounts['arbitrageur'].threshold),
+        createAlert('cancel-order-keeper', 4, mockAccounts['cancel-order-keeper'].threshold),
+        createAlert('liquidator', 4, mockAccounts['liquidator'].threshold),
       ];
 
       expect(findings).toStrictEqual(alerts);
     });
 
-    it('Test when only maker account balance is greater than the threshold', async () => {
-      // mock the provider to return values less than threshold if the maker account
+    it('Test when only maker account balance is less than the threshold', async () => {
+      // mock the provider to return values less than threshold if this is the maker account
       const mockProvider = {
         getBalance: jest.fn((accountAddress) => {
           // If this is the maker account, return 2900000000000000000 so it fires an alert

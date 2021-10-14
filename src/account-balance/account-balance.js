@@ -24,10 +24,11 @@ function provideInitialize(data) {
 }
 
 // helper function to create alerts
-function createAlert(accountName, accountBalance, threshold) {
+function createAlert(accountName, accountBalance, thresholdEth) {
+  const threshold = thresholdEth * 1000000000000000000;
   return Finding.fromObject({
     name: 'Perp.Fi Low Account Balance',
-    description: `The ${accountName} account has a balance below ${threshold} ETH`,
+    description: `The ${accountName} account has a balance below ${thresholdEth} ETH`,
     alertId: 'AE-PERPFI-LOW-ACCOUNT-BALANCE',
     severity: FindingSeverity.Medium,
     type: FindingType.Degraded,

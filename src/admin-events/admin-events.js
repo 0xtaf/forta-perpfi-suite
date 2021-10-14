@@ -58,7 +58,7 @@ function filterAndParseLogs(logs, address, iface, eventNames) {
   const contractLogs = logs.filter((log) => log.address === address);
   if (contractLogs.length === 0) {
     return [];
-  };
+  }
 
   // decode logs and filter on the ones we are interested in
   const parse = (log) => iface.parseLog(log);
@@ -97,7 +97,7 @@ function provideHandleTransaction(data) {
         txEvent.logs,
         contract.address,
         contract.iface,
-        eventNames
+        eventNames,
       );
 
       // alert on each item in parsedLogs
@@ -108,10 +108,9 @@ function provideHandleTransaction(data) {
           contract.address,
           events[parsedLog.name].type,
           events[parsedLog.name].severity,
-          parsedLog.args
+          parsedLog.args,
         ));
       });
-
     });
 
     return findings;

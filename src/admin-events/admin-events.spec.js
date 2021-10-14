@@ -42,8 +42,7 @@ describe('admin event monitoring', () => {
     });
 
     it('returns empty findings if contract address matches but not event', async () => {
-
-      const contracts = initializeData.contracts;
+      const { contracts } = initializeData;
 
       // retrieve the Object corresponding to the InsuranceFund contract
       let index = 0;
@@ -79,8 +78,7 @@ describe('admin event monitoring', () => {
     });
 
     it('returns a finding if a target contract emits an event from its watchlist', async () => {
-
-      const contracts = initializeData.contracts;
+      const { contracts } = initializeData;
 
       // retrieve the Object corresponding to the InsuranceFund contract
       let index = 0;
@@ -119,7 +117,7 @@ describe('admin event monitoring', () => {
         alertId: 'AE-PERPFI-ADMIN-EVENT',
         severity: 4,
         type: 2,
-        everestId: '0xb0b67f51aee86a23574868bf08622c4bddb4ce12', 
+        everestId: '0xb0b67f51aee86a23574868bf08622c4bddb4ce12',
         protocol: 'Perp.Fi',
         metadata: {
           contractName: 'InsuranceFund',

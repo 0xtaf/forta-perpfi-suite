@@ -12,7 +12,6 @@ const blockHandlers = [
   // <none>
 ];
 
-
 // returns findings over all txHandlers' handleTransaction functions
 function provideHandleTransaction(agents) {
   return async function handleTransaction(txEvent) {

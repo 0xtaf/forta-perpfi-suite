@@ -1,5 +1,7 @@
 const ethers = require('ethers');
-const { Finding, createTransactionEvent } = require('forta-agent');
+const {
+  Finding, FindingType, FindingSeverity, createTransactionEvent,
+} = require('forta-agent');
 
 const { provideHandleTransaction, provideInitialize } = require('./admin-events');
 
@@ -115,15 +117,15 @@ describe('admin event monitoring', () => {
         name: 'Perpetual Finance Admin Event',
         description: 'The OwnershipTransferred event was emitted by the InsuranceFund contract',
         alertId: 'AE-PERPFI-ADMIN-EVENT',
-        severity: 4,
-        type: 2,
+        severity: FindingSeverity.High,
+        type: FindingType.Suspicious,
         everestId: '0xb0b67f51aee86a23574868bf08622c4bddb4ce12',
         protocol: 'Perp.Fi',
         metadata: {
           contractName: 'InsuranceFund',
           contractAddress: '0x493b4455c6bee3cc9525234605704c7450171591',
           eventName: 'OwnershipTransferred',
-          strippedArgs: {
+          eventArgs: {
             previousOwner: '0x0000000000000000000000000000000000000000',
             newOwner: '0x0000000000000000000000000000000000000000',
           },

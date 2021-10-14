@@ -4,8 +4,7 @@ const { Finding, FindingSeverity, FindingType } = require('forta-agent');
 const common = require('../common');
 
 // load any agent configuration parameters
-const { perpfiEverestId } = require('../../agent-config.json');
-const adminEvents = require('./admin-events.json');
+const { PERPFI_EVEREST_ID, adminEvents } = require('../../agent-config.json');
 
 // set up a variable to hold initialization data used in the handler
 const initializeData = {};
@@ -19,35 +18,35 @@ function getEvents(contractName) {
   return events;
 }
 
-// helper function that converts the arguments so they can be in the metadata
-// any field that has a key that is of type Number will be removed
-// otherwise, all values are converted to strings so that BigNumbers are readable
-function extractArgs(args) {
-  const strippedArgs = {};
+// helper function that identifies key strings in the args array obtained from log parsing
+// these key-value pairs will be added to the metadata as event args
+// all values are converted to strings so that BigNumbers are readable
+function extractEventArgs(args) {
+  const eventArgs = {};
   Object.keys(args).forEach((key) => {
     if (Number.isNaN(Number(key))) {
-      strippedArgs[key] = args[key].toString();
+      eventArgs[key] = args[key].toString();
     }
   });
-  return strippedArgs;
+  return eventArgs;
 }
 
 // helper function to create alerts
 function createAlert(eventName, contractName, contractAddress, eventType, eventSeverity, args) {
-  const strippedArgs = extractArgs(args);
+  const eventArgs = extractEventArgs(args);
   return Finding.fromObject({
     name: 'Perpetual Finance Admin Event',
     description: `The ${eventName} event was emitted by the ${contractName} contract`,
     alertId: 'AE-PERPFI-ADMIN-EVENT',
     type: FindingType[eventType],
     severity: FindingSeverity[eventSeverity],
-    everestId: perpfiEverestId,
+    everestId: PERPFI_EVEREST_ID,
     protocol: 'Perp.Fi',
     metadata: {
       contractName,
       contractAddress,
       eventName,
-      strippedArgs,
+      eventArgs,
     },
   });
 }

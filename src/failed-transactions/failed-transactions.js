@@ -12,8 +12,8 @@ const initializeData = {};
 function createAlert(name, address, failedTxs, blockWindow, everestId) {
   return Finding.fromObject({
     name: 'Failed transactions alert',
-    description: `${name} has sent ${failedTxs.length} failed transactions \
-    in the past ${blockWindow} blocks`,
+    description: `${name} has sent ${failedTxs.length} failed transactions `
+    + `in the past ${blockWindow} blocks`,
     protocol: 'Perp.Fi',
     alertId: 'AE-PERP.FI-FAILED-TRANSACTIONS',
     severity: FindingSeverity.Medium,
@@ -77,6 +77,8 @@ function provideInitialize(data) {
 
     // assign configurable fields
     Object.assign(data, config.failedTransactions);
+    data.blockWindow = config.failedTransactions.blockWindow;
+    data.failedTxLimit = config.failedTransactions.failedTxLimit;
     data.everestId = config.perpfiEverestId;
     /* eslint-enable no-param-reassign */
   };

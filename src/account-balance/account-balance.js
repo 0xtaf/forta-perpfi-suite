@@ -23,7 +23,7 @@ function provideInitialize(data) {
 
 // helper function to create alerts
 function createAlert(accountName, accountBalance, thresholdEth) {
-  const threshold = thresholdEth * 1000000000000000000;
+  const threshold = ethers.utils.parseEther(thresholdEth.toString());
   return Finding.fromObject({
     name: 'Perp.Fi Low Account Balance',
     description: `The ${accountName} account has a balance below ${thresholdEth} ETH`,
@@ -34,8 +34,8 @@ function createAlert(accountName, accountBalance, thresholdEth) {
     everestId: PERPFI_EVEREST_ID,
     metadata: {
       accountName,
-      accountBalance,
-      threshold,
+      accountBalance: accountBalance.toString(),
+      threshold: threshold.toString(),
     },
   });
 }

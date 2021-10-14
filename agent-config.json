@@ -1,5 +1,11 @@
 {
   "PERPFI_EVEREST_ID": "0xb0b67f51aee86a23574868bf08622c4bddb4ce12",
+  "accountBalance": {
+    "maker": 3,
+    "arbitrageur": 3,
+    "cancelOrderKeeper": 3,
+    "liquidator": 3
+   },
   "adminEvents" : {
     "AccountBalance": {
       "ClearingHouseChanged" : {"type": "Suspicious", "severity": "High"}

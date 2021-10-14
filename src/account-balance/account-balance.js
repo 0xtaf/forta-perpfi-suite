@@ -4,6 +4,7 @@ const {
 } = require('forta-agent');
 
 const accountData = require('./account-balance.json');
+const accountAddressesData = require('../../account-addresses.json');
 
 // Stores information about each account
 const initializeData = {};
@@ -11,14 +12,11 @@ const initializeData = {};
 // Initializes data required for handler
 function provideInitialize(data) {
   return async function initialize() {
-    const accounts = accountData;
-    const accountNames = Object.keys(accounts);
-    const provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
-
     /* eslint-disable no-param-reassign */
-    data.accounts = accounts;
-    data.accountNames = accountNames;
-    data.provider = provider;
+    data.accountThresholds = accountData;
+    data.accountAddresses = accountAddressesData;
+    data.accountNames = Object.keys(data.accountThresholds);
+    data.provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
     /* eslint-enable no-param-reassign */
   };
 }
@@ -44,15 +42,15 @@ function createAlert(accountName, accountBalance, thresholdEth) {
 function provideHandleBlock(data) {
   return async function handleBlock() {
     const findings = [];
-    const { accounts, accountNames, provider } = data;
-    if (!accounts) throw new Error('handleBlock called before initialization');
+    const { accountThresholds, accountAddresses, accountNames, provider } = data;
+    if (!accountThresholds) throw new Error('handleBlock called before initialization');
 
     await Promise.all(accountNames.map(async (accountName) => {
-      const accountBalance = await provider.getBalance(accounts[accountName].address);
+      const accountBalance = await provider.getBalance(accountAddresses[accountName]);
 
       // If balance < threshold add an alert to the findings
-      if (accountBalance < (accounts[accountName].threshold * 1000000000000000000)) {
-        findings.push(createAlert(accountName, accountBalance, accounts[accountName].threshold));
+      if (accountBalance < (accountThresholds[accountName] * 1000000000000000000)) {
+        findings.push(createAlert(accountName, accountBalance, accountThresholds[accountName]));
       }
     }));
 

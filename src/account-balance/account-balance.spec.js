@@ -16,23 +16,18 @@ describe('account balance monitoring', () => {
       handleBlock = provideHandleBlock(initializeData);
     });
 
-    const mockAccounts = {
-      maker: {
-        address: '0',
-        threshold: 3,
-      },
-      arbitrageur: {
-        address: '1',
-        threshold: 3,
-      },
-      'cancel-order-keeper': {
-        address: '2',
-        threshold: 3,
-      },
-      liquidator: {
-        address: '3',
-        threshold: 3,
-      },
+    const mockThresholds = {
+      "maker": 3,
+      "arbitrageur": 3,
+      "cancel-order-keeper": 3,
+      "liquidator": 3
+    };
+
+    const mockAddresses = {
+      "maker": "0",
+      "arbitrageur": "1",
+      "cancel-order-keeper": "2",
+      "liquidator": "3"
     };
 
     it('Test when all account balances are greater than the threshold', async () => {
@@ -45,7 +40,8 @@ describe('account balance monitoring', () => {
       const blockEvent = createBlockEvent({});
 
       // Run agent
-      initializeData.accounts = mockAccounts;
+      initializeData.accountThresholds = mockThresholds;
+      initializeData.accountAddresses = mockAddresses;
       initializeData.provider = mockProvider;
       const findings = await handleBlock(blockEvent);
 
@@ -63,16 +59,17 @@ describe('account balance monitoring', () => {
       const blockEvent = createBlockEvent({});
 
       // Run agent
-      initializeData.accounts = mockAccounts;
+      initializeData.accountThresholds = mockThresholds;
+      initializeData.accountAddresses = mockAddresses;
       initializeData.provider = mockProvider;
       const findings = await handleBlock(blockEvent);
 
       // Assertions
       const alerts = [
-        createAlert('maker', 4, mockAccounts.maker.threshold),
-        createAlert('arbitrageur', 4, mockAccounts.arbitrageur.threshold),
-        createAlert('cancel-order-keeper', 4, mockAccounts['cancel-order-keeper'].threshold),
-        createAlert('liquidator', 4, mockAccounts.liquidator.threshold),
+        createAlert('maker', 4, mockThresholds.maker),
+        createAlert('arbitrageur', 4, mockThresholds.arbitrageur),
+        createAlert('cancel-order-keeper', 4, mockThresholds['cancel-order-keeper']),
+        createAlert('liquidator', 4, mockThresholds.liquidator),
       ];
 
       expect(findings).toStrictEqual(alerts);
@@ -94,13 +91,14 @@ describe('account balance monitoring', () => {
       const blockEvent = createBlockEvent({});
 
       // Run agent
-      initializeData.accounts = mockAccounts;
+      initializeData.accountThresholds = mockThresholds;
+      initializeData.accountAddresses = mockAddresses;
       initializeData.provider = mockProvider;
       const findings = await handleBlock(blockEvent);
 
       // Assertions
       const alerts = [
-        createAlert('maker', 2900000000000000000, 3),
+        createAlert('maker', 2900000000000000000, mockThresholds.maker),
       ];
 
       expect(findings).toStrictEqual(alerts);

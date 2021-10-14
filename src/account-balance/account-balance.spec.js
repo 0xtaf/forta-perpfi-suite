@@ -69,10 +69,10 @@ describe('account balance monitoring', () => {
 
       // Assertions
       const alerts = [
-        createAlert('maker', 4, mockAccounts['maker'].threshold),
-        createAlert('arbitrageur', 4, mockAccounts['arbitrageur'].threshold),
+        createAlert('maker', 4, mockAccounts.maker.threshold),
+        createAlert('arbitrageur', 4, mockAccounts.arbitrageur.threshold),
         createAlert('cancel-order-keeper', 4, mockAccounts['cancel-order-keeper'].threshold),
-        createAlert('liquidator', 4, mockAccounts['liquidator'].threshold),
+        createAlert('liquidator', 4, mockAccounts.liquidator.threshold),
       ];
 
       expect(findings).toStrictEqual(alerts);

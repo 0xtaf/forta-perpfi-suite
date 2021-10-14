@@ -15,7 +15,7 @@ the following handlers:
 
 ## Alerts
 
-- AE-PERPFI-ADMIN-EVENT
+- AE-PERPFI-OWNER-CHANGED-EVENT
   - Fired when a transaction log contains an OwnershipTransferred event for specific Perp.Fi contracts
   - Severity is always set to "high"
   - Type is always set to "suspicious"

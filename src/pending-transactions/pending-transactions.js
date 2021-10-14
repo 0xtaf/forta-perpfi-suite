@@ -1,7 +1,11 @@
+const ethers = require('ethers');
+
 const {
-  provider: jsonRpcProvider,
-  createAlert,
-} = require('./agent-setup');
+  Finding, FindingSeverity, FindingType, getJsonRpcUrl,
+} = require('forta-agent');
+
+// load agent configuration parameters
+const { PERPFI_EVEREST_ID } = require('../../agent-config.json');
 
 // load agent specific constants
 const {
@@ -14,49 +18,81 @@ const {
 const NANOSECONDS_PER_SECOND = BigInt(nanosecondsPerSecond);
 const TIME_WINDOW_SECONDS = BigInt(timeWindowSeconds);
 
-// load account addresses to monitor
-const accountAddresses = require('../../account-addresses.json');
-
-// initialize the object that will track pending transactions for the addresses of interest
-const accountPendingTx = {};
-(Object.keys(accountAddresses)).forEach((name) => {
-  const address = accountAddresses[name];
-  accountPendingTx[address] = {
-    name,
-    transactions: [],
-  };
-});
-
-// initialize the Array of pending transactions
-const pendingTransactions = [];
-
-let blockTimestamp = 0;
-
-// reset the start time value to correctly calculate time offsets between block timestamps
-// NOTE: use process.hrtime.bigint to ensure monotonically increasing timestamps
-let startTime = process.hrtime.bigint();
-
-function provideHandleBlock(provider) {
-  // register a function with the ethers provider to count pending transactions as they occur
-  provider.on('pending', (tx) => {
-    // this function will execute whenever the JSON-RPC provider sends a pending transaction
-    if (blockTimestamp !== 0) {
-      const deltaTime = (process.hrtime.bigint() - startTime) / NANOSECONDS_PER_SECOND;
-      pendingTransactions.push({
-        timestamp: blockTimestamp + deltaTime,
-        hash: tx.hash,
-        from: tx.from,
-      });
-    }
+// helper function to create alerts
+function createAlert(accountName, accountAddress, numPending) {
+  return Finding.fromObject({
+    name: 'Perp.Fi High Pending Transaction Count',
+    description: `The ${accountName} had ${numPending} pending transactions in one minute`,
+    alertId: 'AE-PERPFI-HIGH-PENDING-TX',
+    protocol: 'Perp.Fi',
+    severity: FindingSeverity.Low,
+    type: FindingType.Degraded,
+    everestId: PERPFI_EVEREST_ID,
+    metadata: {
+      accountName,
+      accountAddress,
+      numPending,
+    },
   });
+}
 
+// initialization data Object
+const initializeData = {};
+
+function provideInitialize(data) {
+  return async function initialize() {
+    // load account addresses to monitor
+    const accountAddresses = require('../../account-addresses.json');
+
+    // initialize the object that will track pending transactions for the addresses of interest
+    const accountPendingTx = {};
+    (Object.keys(accountAddresses)).forEach((name) => {
+      const address = accountAddresses[name];
+      accountPendingTx[address] = {
+        name,
+        transactions: [],
+      };
+    });
+
+    // store the accounts information in the data argument
+    data.accountPendingTx = accountPendingTx;
+
+    // initialize the Array of pending transactions
+    data.pendingTransactions = [];
+
+    // initialize the block timestamp
+    data.blockTimestamp = 0;
+
+    // reset the start time value to correctly calculate time offsets between block timestamps
+    // NOTE: use process.hrtime.bigint to ensure monotonically increasing timestamps
+    data.startTime = process.hrtime.bigint();
+
+    // set up an ethers provider to retrieve pending blocks
+    const provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
+
+    // register a function with the ethers provider to count pending transactions as they occur
+    provider.on('pending', (tx) => {
+      // this function will execute whenever the JSON-RPC provider sends a pending transaction
+      if (data.blockTimestamp !== 0) {
+        const deltaTime = (process.hrtime.bigint() - data.startTime) / NANOSECONDS_PER_SECOND;
+        data.pendingTransactions.push({
+          timestamp: data.blockTimestamp + deltaTime,
+          hash: tx.hash,
+          from: tx.from,
+        });
+      }
+    });
+  };
+}
+
+function provideHandleBlock(data) {
   return async function handleBlock(blockEvent) {
     const findings = [];
 
     // get the Array of transaction hashes that were processed as part of this block
     // these transaction hashes will be checked against our Array of pending transactions to remove
     // any that have been successfully processed
-    const { transactions } = blockEvent.block;
+    const { blockTxs } = blockEvent.block;
 
     // update the timestamp with each block that arrives
     // the block timestamp will be set with each new blockEvent
@@ -64,17 +100,17 @@ function provideHandleBlock(provider) {
     // updated every 15 seconds or so), a local start time will be set when each blockEvent occurs
     // that local start time value will then be used to calculate a time offset after each block
     // timestamp whenever a pending transaction occurs
-    blockTimestamp = BigInt(blockEvent.block.timestamp);
-    startTime = process.hrtime.bigint();
+    data.blockTimestamp = BigInt(blockEvent.block.timestamp);
+    data.startTime = process.hrtime.bigint();
 
     // iterate over the stored pending transactions
     let numTransactionsProcessed = 0;
-    pendingTransactions.forEach((transaction) => {
-      (Object.keys(accountPendingTx)).forEach((address) => {
+    data.pendingTransactions.forEach((transaction) => {
+      (Object.keys(data.accountPendingTx)).forEach((address) => {
         // is this transaction from an address of interest?
         if (transaction.from === address) {
           // add the transaction timestamp to the appropriate Array
-          accountPendingTx[address].transactions.push({
+          data.accountPendingTx[address].transactions.push({
             timestamp: transaction.timestamp,
             hash: transaction.hash,
           });
@@ -87,30 +123,31 @@ function provideHandleBlock(provider) {
     // that are of interest.
     // now we will remove the pending transactions that we iterated over
     for (let i = 0; i < numTransactionsProcessed; i += 1) {
-      pendingTransactions.shift();
+      data.pendingTransactions.shift();
     }
 
     // filter out any transactions that were processed in the current block
-    (Object.keys(accountPendingTx)).forEach((address) => {
-      accountPendingTx[address].transactions = accountPendingTx[address].transactions.filter(
-        (tx) => transactions.indexOf(tx.hash) === -1,
+    (Object.keys(data.accountPendingTx)).forEach((address) => {
+      const txs = data.accountPendingTx[address].transactions;
+      data.accountPendingTx[address].transactions = txs.filter(
+        (tx) => blockTxs.indexOf(tx.hash) === -1,
       );
     });
 
     // iterate over stored pending transactions to count how many have occurred in the specified
     // duration
-    (Object.keys(accountPendingTx)).forEach((address) => {
-      while (accountPendingTx[address].transactions.length > 0) {
-        const { timestamp } = accountPendingTx[address].transactions[0];
-        const accountName = accountPendingTx[address].name;
+    (Object.keys(data.accountPendingTx)).forEach((address) => {
+      while (data.accountPendingTx[address].transactions.length > 0) {
+        const { timestamp } = data.accountPendingTx[address].transactions[0];
+        const accountName = data.accountPendingTx[address].name;
 
-        if (timestamp < (blockTimestamp - TIME_WINDOW_SECONDS)) {
+        if (timestamp < (data.blockTimestamp - TIME_WINDOW_SECONDS)) {
           // the timestamp is outside the window, remove the transaction
-          accountPendingTx[address].transactions.pop();
+          data.accountPendingTx[address].transactions.pop();
         } else {
           // check the number of pending transactions
           // if it is over our threshold, create an alert and add it to the findings Array
-          const numPending = accountPendingTx[address].transactions.length;
+          const numPending = data.accountPendingTx[address].transactions.length;
 
           if (numPending > TX_THRESHOLD) {
             findings.push(createAlert(accountName, address, numPending));
@@ -124,8 +161,8 @@ function provideHandleBlock(provider) {
 }
 
 module.exports = {
-  accountPendingTx,
-  pendingTransactions,
   provideHandleBlock,
-  handleBlock: provideHandleBlock(jsonRpcProvider),
+  handleBlock: provideHandleBlock(initializeData),
+  provideInitialize,
+  initialize: provideInitialize(initializeData),
 };

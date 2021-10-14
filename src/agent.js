@@ -2,11 +2,10 @@
 const pendingTransactions = require('./pending-transactions/pending-transactions');
 
 const txHandlers = [
-  pendingTransactions,
 ];
 
 const blockHandlers = [
-  // <none>
+  pendingTransactions,
 ];
 
 // returns findings over all txHandler's handleTransaction functions

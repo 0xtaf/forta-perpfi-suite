@@ -1,12 +1,12 @@
 // transaction handlers
-// <none>
+const failedTransactions = require('./failed-transactions/failed-transactions');
 
 // block handlers
 // <none>
 
 const txHandlers = [
   // list txHandlers like this `optimisticOracle,` +++++ REMOVE ME +++++
-  // <none>
+  failedTransactions,
 ];
 
 const blockHandlers = [

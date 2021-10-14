@@ -1,3 +1,7 @@
 {
-  "perpfiEverestId": "0xb0b67f51aee86a23574868bf08622c4bddb4ce12"
+  "perpfiEverestId": "0xb0b67f51aee86a23574868bf08622c4bddb4ce12",
+  "failedTransactions": {
+    "blockWindow": 10,
+    "failedTxLimit": 5
+  }
 }

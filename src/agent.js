@@ -1,12 +1,11 @@
 // transaction handlers
-// <none>
+const adminEvents = require('./admin-events/admin-events');
 
 // block handlers
 // <none>
 
 const txHandlers = [
-  // list txHandlers like this `optimisticOracle,` +++++ REMOVE ME +++++
-  // <none>
+  adminEvents,
 ];
 
 const blockHandlers = [

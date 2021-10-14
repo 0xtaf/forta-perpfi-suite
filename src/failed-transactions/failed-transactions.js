@@ -28,11 +28,21 @@ function createAlert(name, address, failedTxs, blockWindow, everestId) {
 }
 
 function provideHandleTransaction(data) {
+  /**
+   * data is expected to have
+   *  - addresses (object of name:address entries we are interested in)
+   *  - failedTxs (object to hold failed txs)
+   *  - blockWindow (config of how many blocks we should look for failed txs)
+   *  - failedTxLimit (how many failed txs required to raise an alert)
+   *  - everestId (everestId)
+   */
   return async function handleTransaction(txEvent) {
-    const findings = [];
+    if (!data) throw new Error("called handler before initializing");
     const {
       blockWindow, everestId, addresses, failedTxs, failedTxLimit,
     } = data;
+
+    const findings = [];
 
     // we are only interested with failed transactions
     if (txEvent.receipt.status) {
@@ -76,7 +86,6 @@ function provideInitialize(data) {
     });
 
     // assign configurable fields
-    Object.assign(data, config.failedTransactions);
     data.blockWindow = config.failedTransactions.blockWindow;
     data.failedTxLimit = config.failedTransactions.failedTxLimit;
     data.everestId = config.PERPFI_EVEREST_ID;

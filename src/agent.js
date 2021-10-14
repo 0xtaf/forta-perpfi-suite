@@ -2,7 +2,7 @@
 // <none>
 
 // block handlers
-// <none>
+const usdcBalanceChange = require('./usdc-balance-change/usdc-balance-change');
 
 const txHandlers = [
   // list txHandlers like this `optimisticOracle,` +++++ REMOVE ME +++++
@@ -10,7 +10,7 @@ const txHandlers = [
 ];
 
 const blockHandlers = [
-  // <none>
+  usdcBalanceChange,
 ];
 
 // returns findings over all txHandler's handleTransaction functions

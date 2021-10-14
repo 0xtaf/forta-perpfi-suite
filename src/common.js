@@ -8,7 +8,7 @@ const {
 // load the Perpetual Finance contract addresses and abi paths
 const protocolData = require('../protocol-data.json');
 
-// create an array with teh base tokens for Perpetual Finance
+// create an array with the base tokens for Perpetual Finance
 const baseTokens = ['vUSD', 'vBTC', 'vETH'];
 
 function getContractAddressesAbis(contractNames) {

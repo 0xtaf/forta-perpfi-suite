@@ -37,10 +37,10 @@ function provideHandleTransaction(data) {
    *  - everestId (project ID from https://everest.link)
    */
   return async function handleTransaction(txEvent) {
-    if (!data) throw new Error("called handler before initializing");
     const {
       blockWindow, everestId, addresses, failedTxs, failedTxLimit,
     } = data;
+    if (!addresses) throw new Error("called handler before initializing");
 
     const findings = [];
 

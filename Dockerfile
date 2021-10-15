@@ -13,6 +13,8 @@ WORKDIR /app
 # COPY --from=builder /app/dist ./
 COPY ./src ./src
 COPY agent-config.json ./
+COPY account-addresses.json ./
+COPY protocol-data.json ./
 COPY package*.json ./
 COPY forta.config.json ./
 COPY account-addresses.json ./

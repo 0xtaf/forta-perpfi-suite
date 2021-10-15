@@ -3,6 +3,7 @@ const adminEvents = require('./admin-events/admin-events');
 
 // block handlers
 const accountBalance = require('./account-balance/account-balance');
+const pendingTransactions = require('./pending-transactions/pending-transactions');
 
 const txHandlers = [
   adminEvents,
@@ -10,6 +11,7 @@ const txHandlers = [
 
 const blockHandlers = [
   accountBalance,
+  pendingTransactions,
 ];
 
 // returns findings over all txHandler's handleTransaction functions

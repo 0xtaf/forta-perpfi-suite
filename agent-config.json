@@ -50,5 +50,9 @@
     "vUSD": {
       "OwnershipTransferred" : {"type": "Suspicious", "severity": "High"}
     }
-  } 
+  },
+  "pendingTransactions": {
+    "timeWindowSeconds": 60,
+    "txThreshold": 10
+  }
 }

@@ -9,6 +9,7 @@ the following handlers:
 
 - account-balance
 - admin-events
+- pending-transactions
 
 ## Supported Chains
 
@@ -29,6 +30,13 @@ the following handlers:
   - Severity is set to the value in admin-events.json
   - Type is set to the value in admin-events.json
   - Metadata field contains contract name, contract address, event name, and event arguments
+
+<!-- -->
+- AE-PERPFI-HIGH-PENDING-TX
+  - Fired when the number of pending transactions for specific Perpetual Finance addresses exceeds a threshold
+  - Severity is always set to "low"
+  - Type is always set to "degraded"
+  - Metadata fields contains Perp.Fi account name, account address, and number of pending transactions
 
 ## Test Data
 

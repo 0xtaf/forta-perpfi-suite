@@ -5,13 +5,16 @@ const {
 } = require('forta-agent');
 
 // load agent configuration parameters
-const { 
+const {
   PERPFI_EVEREST_ID,
   pendingTransactions: {
     timeWindowSeconds,
     txThreshold: TX_THRESHOLD,
-  }
+  },
 } = require('../../agent-config.json');
+
+// load account addresses to monitor
+const accountAddresses = require('../../account-addresses.json');
 
 // convert value to BigInt type
 const NANOSECONDS_PER_SECOND = BigInt(1e9);
@@ -40,9 +43,6 @@ const initializeData = {};
 
 function provideInitialize(data) {
   return async function initialize() {
-    // load account addresses to monitor
-    const accountAddresses = require('../../account-addresses.json');
-
     // initialize the object that will track pending transactions for the addresses of interest
     const accountPendingTx = {};
     (Object.keys(accountAddresses)).forEach((name) => {
@@ -54,9 +54,10 @@ function provideInitialize(data) {
     });
 
     // store the accounts information in the data argument
+    /* eslint-disable no-param-reassign */
     data.accountPendingTx = accountPendingTx;
 
-    // initialize the Array of pending transactions
+    // initialize the array of pending transactions
     data.pendingTransactions = [];
 
     // initialize the block timestamp
@@ -70,6 +71,7 @@ function provideInitialize(data) {
     if (!data.provider) {
       data.provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
     }
+    /* eslint-enable no-param-reassign */
 
     // register a function with the ethers provider to count pending transactions as they occur
     data.provider.on('pending', (tx) => {
@@ -90,8 +92,8 @@ function provideHandleBlock(data) {
   return async function handleBlock(blockEvent) {
     const findings = [];
 
-    // get the Array of transaction hashes that were processed as part of this block
-    // these transaction hashes will be checked against our Array of pending transactions to remove
+    // get the array of transaction hashes that were processed as part of this block
+    // these transaction hashes will be checked against our array of pending transactions to remove
     // any that have been successfully processed
     const { transactions: blockTxs } = blockEvent.block;
 
@@ -101,8 +103,10 @@ function provideHandleBlock(data) {
     // updated every 15 seconds or so), a local start time will be set when each blockEvent occurs
     // that local start time value will then be used to calculate a time offset after each block
     // timestamp whenever a pending transaction occurs
+    /* eslint-disable no-param-reassign */
     data.blockTimestamp = BigInt(blockEvent.block.timestamp);
     data.startTime = process.hrtime.bigint();
+    /* eslint-enable no-param-reassign */
 
     // iterate over the stored pending transactions
     let numTransactionsProcessed = 0;
@@ -110,26 +114,27 @@ function provideHandleBlock(data) {
       (Object.keys(data.accountPendingTx)).forEach((address) => {
         // is this transaction from an address of interest?
         if (transaction.from === address) {
-          // add the transaction timestamp to the appropriate Array
+          // add the transaction timestamp to the appropriate array
           data.accountPendingTx[address].transactions.push({
             timestamp: transaction.timestamp,
             hash: transaction.hash,
           });
         }
       });
-      numTransactionsProcessed += 1;
+      numTransactionsProcessed++;
     });
 
-    // by this point, we have iterated over the Array of pending transactions and stored the ones
+    // by this point, we have iterated over the array of pending transactions and stored the ones
     // that are of interest.
     // now we will remove the pending transactions that we iterated over
-    for (let i = 0; i < numTransactionsProcessed; i += 1) {
+    for (let i = 0; i < numTransactionsProcessed; i++) {
       data.pendingTransactions.shift();
     }
 
     // filter out any transactions that were processed in the current block
     (Object.keys(data.accountPendingTx)).forEach((address) => {
       const txs = data.accountPendingTx[address].transactions;
+      // eslint-disable-next-line no-param-reassign
       data.accountPendingTx[address].transactions = txs.filter(
         (tx) => blockTxs.indexOf(tx.hash) === -1,
       );
@@ -147,7 +152,7 @@ function provideHandleBlock(data) {
           data.accountPendingTx[address].transactions.pop();
         } else {
           // check the number of pending transactions
-          // if it is over our threshold, create an alert and add it to the findings Array
+          // if it is over our threshold, create an alert and add it to the findings array
           const numPending = data.accountPendingTx[address].transactions.length;
 
           if (numPending > TX_THRESHOLD) {

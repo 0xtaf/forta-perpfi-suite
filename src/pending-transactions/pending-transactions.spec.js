@@ -1,11 +1,14 @@
-const { createBlockEvent } = require('forta-agent');
+const {
+  createBlockEvent,
+  Finding,
+} = require('forta-agent');
 
 // load agent specific constants
 const {
   pendingTransactions: {
     timeWindowSeconds,
     txThreshold: TX_THRESHOLD,
-  }
+  },
 } = require('../../agent-config.json');
 
 const TIME_WINDOW_SECONDS = BigInt(timeWindowSeconds);
@@ -13,20 +16,19 @@ const TIME_WINDOW_SECONDS = BigInt(timeWindowSeconds);
 // initialize the variable that will serve as the callback passed to the 'provider.on' function
 // within the provideHandleBlock() function
 // by giving this variable module scope, each test will have the ability to modify the callback to
-// inject data into pending transactions Array
-let callbackFunction;
+// inject data into pending transactions array
+let providerOnCallbackFunction;
 
 // mock the provider.on() function to imitate the JSON-RPC endpoint returning pending transactions
 function mockProviderOn(blockTagString, callback) {
-  callbackFunction = callback;
+  providerOnCallbackFunction = callback;
 }
 
 // load account addresses that will be monitored by the handler
 const accountAddresses = require('../../account-addresses.json');
 
 // now that the ethers.Provider constructor has been mocked, import the handler under test
-const { 
-  createAlert,
+const {
   provideHandleBlock,
   provideInitialize,
 } = require('./pending-transactions');
@@ -46,10 +48,9 @@ describe('Perpetual Finance pending transaction agent', () => {
     initialize = provideInitialize(data);
     await initialize();
 
-    // create the handler, which will set the variable 'callbackFunction' to the callback that
-    // 'provideHandleBlock' passes to provider.on()
+    // create the handler, which will set the variable 'providerOnCallbackFunction' to the callback
+    // that 'provideHandleBlock' passes to provider.on()
     handleBlock = provideHandleBlock(data);
-
   });
 
   describe('Pending transaction monitoring', () => {
@@ -64,8 +65,8 @@ describe('Perpetual Finance pending transaction agent', () => {
 
       // attempt to add more pending transactions than the threshold
       for (let i = 0; i < (TX_THRESHOLD + 1); i++) {
-        // call the callback function to add a pending transaction to the Array
-        callbackFunction({
+        // call the callback function to add a pending transaction to the array
+        providerOnCallbackFunction({
           hash: '0x'.concat(i.toString(16)),
           from: '0x'.concat(i.toString(16)),
         });
@@ -77,7 +78,7 @@ describe('Perpetual Finance pending transaction agent', () => {
       // there should be no findings
       expect(findings).toStrictEqual([]);
 
-      // there should be no pending transactions in the Array
+      // there should be no pending transactions in the array
       expect(data.pendingTransactions).toStrictEqual([]);
     });
 
@@ -100,11 +101,11 @@ describe('Perpetual Finance pending transaction agent', () => {
       const mockNumPendingTx = TX_THRESHOLD + 1;
 
       // now that the first blockEvent has been handled (with non-zero timestamp), the pending
-      // transactions will added to the pendingTransactions Array
+      // transactions will added to the pendingTransactions array
       for (let i = 0; i < mockNumPendingTx; i++) {
-        // call the callback function to add a pending transaction to the Array
+        // call the callback function to add a pending transaction to the array
         // the transaction will have an address that we are monitoring
-        callbackFunction({
+        providerOnCallbackFunction({
           hash: '0x'.concat(i.toString(16)),
           from: mockAddress,
         });
@@ -147,11 +148,11 @@ describe('Perpetual Finance pending transaction agent', () => {
       const mockAccountName = 'maker';
 
       // now that the first blockEvent has been handled (with non-zero timestamp), the pending
-      // transactions will added to the pendingTransactions Array
+      // transactions will added to the pendingTransactions array
       for (let i = 0; i < mockNumPendingTx; i++) {
-        // call the callback function to add a pending transaction to the Array
+        // call the callback function to add a pending transaction to the array
         // the transaction will have an address that we are monitoring
-        callbackFunction({
+        providerOnCallbackFunction({
           hash: '0x'.concat(i.toString(16)),
           from: mockAddress,
         });
@@ -169,14 +170,28 @@ describe('Perpetual Finance pending transaction agent', () => {
       // create an alert
       findings = await handleBlock(mockBlockEvent);
 
-      // construct the expected finding Array (single finding)
-      const expectedFinding = createAlert(mockAccountName, mockAddress, mockNumPendingTx);
+      // construct the expected finding
+      const expectedFinding = Finding.fromObject({
+        name: 'Perp.Fi High Pending Transaction Count',
+        description:
+        `The ${mockAccountName} had ${mockNumPendingTx} pending transactions in one minute`,
+        alertId: 'AE-PERPFI-HIGH-PENDING-TX',
+        protocol: 'Perp.Fi',
+        severity: 2,
+        type: 3,
+        everestId: '0xb0b67f51aee86a23574868bf08622c4bddb4ce12',
+        metadata: {
+          accountName: mockAccountName,
+          accountAddress: mockAddress,
+          numPending: mockNumPendingTx,
+        },
+      });
 
       // assert the findings
       expect(findings).toStrictEqual([expectedFinding]);
     });
 
-    it('returns no findings if the address is not in our Array of addresses', async () => {
+    it('returns no findings if the address is not in our array of addresses', async () => {
       // create and send a blockEvent to initialize processing of pending transactions
       let mockBlockEvent = createBlockEvent({
         block: {
@@ -194,11 +209,11 @@ describe('Perpetual Finance pending transaction agent', () => {
       const mockNumPendingTx = TX_THRESHOLD + 1;
 
       // now that the first blockEvent has been handled (with non-zero timestamp), the pending
-      // transactions will added to the pendingTransactions Array
+      // transactions will added to the pendingTransactions array
       for (let i = 0; i < mockNumPendingTx; i++) {
-        // call the callback function to add a pending transaction to the Array
+        // call the callback function to add a pending transaction to the array
         // the transaction will have an address that we are monitoring
-        callbackFunction({
+        providerOnCallbackFunction({
           hash: '0x'.concat(i.toString(16)),
           from: mockAddress,
         });

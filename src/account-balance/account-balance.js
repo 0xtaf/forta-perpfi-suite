@@ -13,7 +13,10 @@ const initializeData = {};
 function provideInitialize(data) {
   return async function initialize() {
     /* eslint-disable no-param-reassign */
+    // assign configurable fields
     data.accountThresholds = config.accountBalance;
+    data.everestId = config.PERPFI_EVEREST_ID;
+
     data.accountAddresses = accountAddressesData;
     data.accountNames = Object.keys(data.accountThresholds);
     data.provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
@@ -22,7 +25,7 @@ function provideInitialize(data) {
 }
 
 // helper function to create alerts
-function createAlert(accountName, accountBalance, thresholdEth) {
+function createAlert(accountName, accountBalance, thresholdEth, everestId) {
   const threshold = ethers.utils.parseEther(thresholdEth.toString());
   return Finding.fromObject({
     name: 'Perp.Fi Low Account Balance',
@@ -31,7 +34,7 @@ function createAlert(accountName, accountBalance, thresholdEth) {
     severity: FindingSeverity.Medium,
     type: FindingType.Degraded,
     protocol: 'Perp.Fi',
-    everestId: config.PERPFI_EVEREST_ID,
+    everestId,
     metadata: {
       accountName,
       accountBalance: accountBalance.toString(),
@@ -44,7 +47,7 @@ function provideHandleBlock(data) {
   return async function handleBlock() {
     const findings = [];
     const {
-      accountThresholds, accountAddresses, accountNames, provider,
+      accountThresholds, accountAddresses, accountNames, provider, everestId,
     } = data;
     if (!accountThresholds) {
       throw new Error('handleBlock called before initialization');
@@ -55,7 +58,12 @@ function provideHandleBlock(data) {
 
       // If balance < threshold add an alert to the findings
       if (accountBalance < (accountThresholds[accountName] * 1000000000000000000)) {
-        findings.push(createAlert(accountName, accountBalance, accountThresholds[accountName]));
+        findings.push(createAlert(
+          accountName,
+          accountBalance,
+          accountThresholds[accountName],
+          everestId,
+        ));
       }
     }));
 

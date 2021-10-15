@@ -32,7 +32,15 @@ function extractEventArgs(args) {
 }
 
 // helper function to create alerts
-function createAlert(eventName, contractName, contractAddress, eventType, eventSeverity, args) {
+function createAlert(
+  eventName,
+  contractName,
+  contractAddress,
+  eventType,
+  eventSeverity,
+  args,
+  everestId,
+) {
   const eventArgs = extractEventArgs(args);
   return Finding.fromObject({
     name: 'Perpetual Finance Admin Event',
@@ -40,7 +48,7 @@ function createAlert(eventName, contractName, contractAddress, eventType, eventS
     alertId: 'AE-PERPFI-ADMIN-EVENT',
     type: FindingType[eventType],
     severity: FindingSeverity[eventSeverity],
-    everestId: config.PERPFI_EVEREST_ID,
+    everestId,
     protocol: 'Perp.Fi',
     metadata: {
       contractName,
@@ -70,7 +78,9 @@ function filterAndParseLogs(logs, address, iface, eventNames) {
 function provideInitialize(data) {
   return async function initialize() {
     /* eslint-disable no-param-reassign */
+    // assign configurable fields
     data.adminEvents = config.adminEvents;
+    data.everestId = config.PERPFI_EVEREST_ID;
 
     // get the contract names that have events that we wish to monitor
     const contractNames = Object.keys(data.adminEvents);
@@ -83,7 +93,7 @@ function provideInitialize(data) {
 
 function provideHandleTransaction(data) {
   return async function handleTransaction(txEvent) {
-    const { adminEvents, contracts } = data;
+    const { adminEvents, contracts, everestId } = data;
     if (!contracts) throw new Error('handleTransaction called before initialization');
 
     const findings = [];
@@ -111,6 +121,7 @@ function provideHandleTransaction(data) {
           events[parsedLog.name].type,
           events[parsedLog.name].severity,
           parsedLog.args,
+          everestId,
         ));
       });
     });

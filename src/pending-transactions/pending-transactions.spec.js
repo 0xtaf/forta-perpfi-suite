@@ -181,8 +181,8 @@ describe('Perpetual Finance pending transaction agent', () => {
         type: 3,
         everestId: '0xb0b67f51aee86a23574868bf08622c4bddb4ce12',
         metadata: {
-          accountName: mockAccountName,
-          accountAddress: mockAddress,
+          accountName: 'maker',
+          accountAddress: '0x2E8f9B6294aAdef4CE2Fc5acf78cbc04396240EA',
           numPending: mockNumPendingTx,
         },
       });

@@ -4,7 +4,7 @@ const {
 } = require('forta-agent');
 
 const accountAddressesData = require('../../account-addresses.json');
-const { PERPFI_EVEREST_ID, accountBalance: accountData } = require('../../agent-config.json');
+const config = require('../../agent-config.json');
 
 // Stores information about each account
 const initializeData = {};
@@ -13,7 +13,7 @@ const initializeData = {};
 function provideInitialize(data) {
   return async function initialize() {
     /* eslint-disable no-param-reassign */
-    data.accountThresholds = accountData;
+    data.accountThresholds = config.accountBalance;
     data.accountAddresses = accountAddressesData;
     data.accountNames = Object.keys(data.accountThresholds);
     data.provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
@@ -31,7 +31,7 @@ function createAlert(accountName, accountBalance, thresholdEth) {
     severity: FindingSeverity.Medium,
     type: FindingType.Degraded,
     protocol: 'Perp.Fi',
-    everestId: PERPFI_EVEREST_ID,
+    everestId: config.PERPFI_EVEREST_ID,
     metadata: {
       accountName,
       accountBalance: accountBalance.toString(),

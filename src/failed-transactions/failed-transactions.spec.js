@@ -2,9 +2,11 @@ const { provideInitialize, provideHandleTransaction, createAlert } = require('./
 
 const data = {};
 
+// addressA is the address we are monitoring, addressB is arbitrary
 const addressA = `0x${'A'.repeat(40)}`;
 const addressB = `0x${'B'.repeat(40)}`;
 
+// converts an integer into a 256 bit hex string
 function toHash(num) {
   return `0x${num.toString(16).padStart(64, 0)}`;
 }

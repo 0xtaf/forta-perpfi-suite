@@ -3,7 +3,7 @@ const {
 } = require('forta-agent');
 
 // addresses we are interested in monitoring
-const contractAddresses = require('../../account-addresses.json');
+const accountAddresses = require('../../account-addresses.json');
 const config = require('../../agent-config.json');
 
 const initializeData = {};
@@ -11,11 +11,11 @@ const initializeData = {};
 // formats provided data into a Forta alert
 function createAlert(name, address, failedTxs, blockWindow, everestId) {
   return Finding.fromObject({
-    name: 'Failed transactions alert',
+    name: 'Perp.Fi Failed Transactions Alert',
     description: `${name} has sent ${failedTxs.length} failed transactions `
     + `in the past ${blockWindow} blocks`,
     protocol: 'Perp.Fi',
-    alertId: 'AE-PERP.FI-FAILED-TRANSACTIONS',
+    alertId: 'AE-PERPFI-FAILED-TRANSACTIONS',
     severity: FindingSeverity.Medium,
     type: FindingType.Info,
     everestId,
@@ -29,12 +29,12 @@ function createAlert(name, address, failedTxs, blockWindow, everestId) {
 
 function provideHandleTransaction(data) {
   /**
-   * data is expected to have
+   * data is expected to have:
    *  - addresses (object of name:address entries we are interested in)
    *  - failedTxs (object to hold failed txs)
    *  - blockWindow (config of how many blocks we should look for failed txs)
    *  - failedTxLimit (how many failed txs required to raise an alert)
-   *  - everestId (everestId)
+   *  - everestId (project ID from https://everest.link)
    */
   return async function handleTransaction(txEvent) {
     if (!data) throw new Error("called handler before initializing");
@@ -54,12 +54,14 @@ function provideHandleTransaction(data) {
       // skip addresses we are not interested in
       if (txEvent.from !== address) return;
 
-      // add new occurance
+      // add new occurrence
       failedTxs[name][txEvent.hash] = txEvent.blockNumber;
 
       // filter out occurences older than blockWindow
       Object.entries(failedTxs[name]).forEach(([hash, blockNumber]) => {
-        if (blockNumber < txEvent.blockNumber - blockWindow) delete failedTxs[name][hash];
+        if (blockNumber < txEvent.blockNumber - blockWindow) {
+          delete failedTxs[name][hash];
+        }
       });
 
       // create finding if there are too many failed txs
@@ -80,7 +82,7 @@ function provideInitialize(data) {
     data.failedTxs = {};
 
     // add all addresses we will watch as lower case and initialize failed tx object
-    Object.entries(contractAddresses).forEach(([name, address]) => {
+    Object.entries(accountAddresses).forEach(([name, address]) => {
       data.addresses[name] = address.toLowerCase();
       data.failedTxs[name] = {};
     });

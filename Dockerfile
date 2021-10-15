@@ -16,6 +16,5 @@ COPY agent-config.json ./
 COPY account-addresses.json ./
 COPY protocol-data.json ./
 COPY package*.json ./
-COPY account-addresses.json ./
 RUN npm ci --production
 CMD [ "npm", "run", "start:prod" ]

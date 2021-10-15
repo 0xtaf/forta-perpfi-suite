@@ -5,16 +5,6 @@ const {
   FindingType,
 } = require('forta-agent');
 
-// load agent specific constants
-const {
-  pendingTransactions: {
-    timeWindowSeconds,
-    txThreshold: TX_THRESHOLD,
-  },
-} = require('../../agent-config.json');
-
-const TIME_WINDOW_SECONDS = BigInt(timeWindowSeconds);
-
 // initialize the variable that will serve as the callback passed to the 'provider.on' function
 // within the provideHandleBlock() function
 // by giving this variable module scope, each test will have the ability to modify the callback to
@@ -66,7 +56,7 @@ describe('Perpetual Finance pending transaction agent', () => {
       });
 
       // attempt to add more pending transactions than the threshold
-      for (let i = 0; i < (TX_THRESHOLD + 1); i++) {
+      for (let i = 0; i < (data.config.TX_THRESHOLD + 1); i++) {
         // call the callback function to add a pending transaction to the array
         providerOnCallbackFunction({
           hash: '0x'.concat(i.toString(16)),
@@ -100,7 +90,7 @@ describe('Perpetual Finance pending transaction agent', () => {
       expect(findings).toStrictEqual([]);
 
       const mockAddress = accountAddresses.maker;
-      const mockNumPendingTx = TX_THRESHOLD + 1;
+      const mockNumPendingTx = data.config.TX_THRESHOLD + 1;
 
       // now that the first blockEvent has been handled (with non-zero timestamp), the pending
       // transactions will added to the pendingTransactions array
@@ -119,7 +109,8 @@ describe('Perpetual Finance pending transaction agent', () => {
       mockBlockEvent = createBlockEvent({
         block: {
           transactions: [],
-          timestamp: TIME_WINDOW_SECONDS + BigInt(blockTimestampFirst) + BigInt(timeDelay),
+          timestamp:
+          data.config.TIME_WINDOW_SECONDS + BigInt(blockTimestampFirst) + BigInt(timeDelay),
         },
       });
 
@@ -146,7 +137,7 @@ describe('Perpetual Finance pending transaction agent', () => {
       expect(findings).toStrictEqual([]);
 
       const mockAddress = accountAddresses.maker;
-      const mockNumPendingTx = TX_THRESHOLD + 1;
+      const mockNumPendingTx = data.config.TX_THRESHOLD + 1;
       const mockAccountName = 'maker';
 
       // now that the first blockEvent has been handled (with non-zero timestamp), the pending
@@ -208,7 +199,7 @@ describe('Perpetual Finance pending transaction agent', () => {
       expect(findings).toStrictEqual([]);
 
       const mockAddress = '0xFAKEADDRESS';
-      const mockNumPendingTx = TX_THRESHOLD + 1;
+      const mockNumPendingTx = data.config.TX_THRESHOLD + 1;
 
       // now that the first blockEvent has been handled (with non-zero timestamp), the pending
       // transactions will added to the pendingTransactions array

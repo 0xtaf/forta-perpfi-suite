@@ -5,20 +5,13 @@ const {
 } = require('forta-agent');
 
 // load agent configuration parameters
-const {
-  PERPFI_EVEREST_ID,
-  pendingTransactions: {
-    timeWindowSeconds,
-    txThreshold: TX_THRESHOLD,
-  },
-} = require('../../agent-config.json');
+const config = require('../../agent-config.json');
 
 // load account addresses to monitor
 const accountAddresses = require('../../account-addresses.json');
 
 // convert value to BigInt type
 const NANOSECONDS_PER_SECOND = BigInt(1e9);
-const TIME_WINDOW_SECONDS = BigInt(timeWindowSeconds);
 
 // helper function to create alerts
 function createAlert(accountName, accountAddress, numPending) {
@@ -29,7 +22,7 @@ function createAlert(accountName, accountAddress, numPending) {
     protocol: 'Perp.Fi',
     severity: FindingSeverity.Low,
     type: FindingType.Degraded,
-    everestId: PERPFI_EVEREST_ID,
+    everestId: config.PERPFI_EVEREST_ID,
     metadata: {
       accountName,
       accountAddress,
@@ -53,8 +46,12 @@ function provideInitialize(data) {
       };
     });
 
-    // store the accounts information in the data argument
     /* eslint-disable no-param-reassign */
+    data.config = config.pendingTransactions;
+    data.config.TIME_WINDOW_SECONDS = BigInt(data.config.timeWindowSeconds);
+    data.config.TX_THRESHOLD = data.config.txThreshold;
+
+    // store the accounts information in the data argument
     data.accountPendingTx = accountPendingTx;
 
     // initialize the array of pending transactions
@@ -147,7 +144,7 @@ function provideHandleBlock(data) {
         const { timestamp } = data.accountPendingTx[address].transactions[0];
         const accountName = data.accountPendingTx[address].name;
 
-        if (timestamp < (data.blockTimestamp - TIME_WINDOW_SECONDS)) {
+        if (timestamp < (data.blockTimestamp - data.config.TIME_WINDOW_SECONDS)) {
           // the timestamp is outside the window, remove the transaction
           data.accountPendingTx[address].transactions.pop();
         } else {
@@ -155,7 +152,7 @@ function provideHandleBlock(data) {
           // if it is over our threshold, create an alert and add it to the findings array
           const numPending = data.accountPendingTx[address].transactions.length;
 
-          if (numPending > TX_THRESHOLD) {
+          if (numPending > data.config.txThreshold) {
             findings.push(createAlert(accountName, address, numPending));
           }
           break;

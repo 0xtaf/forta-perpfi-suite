@@ -10,6 +10,7 @@ the following handlers:
 - account-balance
 - admin-events
 - pending-transactions
+- price-spread-ratio
 
 ## Supported Chains
 
@@ -36,7 +37,14 @@ the following handlers:
   - Fired when the number of pending transactions for specific Perpetual Finance addresses exceeds a threshold
   - Severity is always set to "low"
   - Type is always set to "degraded"
-  - Metadata fields contains Perp.Fi account name, account address, and number of pending transactions
+  - Metadata field contains Perp.Fi account name, account address, and number of pending transactions
+
+<!-- -->
+- AE-PERPFI-PRICE-SPREAD-RATIO
+  - Fired when the price spread ratio between the Perpetual Finance price and the FTX price exceed a threshold for a period of time
+  - Severity is always set to "low"
+  - Type is always set to "degraded"
+  - Metadata field contains Perp.Fi account name, account address, price spread ratio, lower limit, upper limit, time threshold, and time that price has been outside limits
 
 ## Test Data
 

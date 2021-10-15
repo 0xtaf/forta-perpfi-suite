@@ -54,5 +54,19 @@
   "pendingTransactions": {
     "timeWindowSeconds": 60,
     "txThreshold": 10
+  },
+  "priceSpreadRatio": {
+    "vBTC": {
+      "timeThresholdSeconds": 300,
+      "upperLimitPercent": 0.3,
+      "lowerLimitPercent": -0.3,
+      "ftxUrl": "https://ftx.com/api/markets/BTC/USD"
+    },
+    "vETH": {
+      "timeThresholdSeconds": 300,
+      "upperLimitPercent": 0.3,
+      "lowerLimitPercent": -0.3,
+      "ftxUrl": "https://ftx.com/api/markets/ETH/USD"
+    }
   }
 }

@@ -4,6 +4,7 @@ const adminEvents = require('./admin-events/admin-events');
 // block handlers
 const accountBalance = require('./account-balance/account-balance');
 const pendingTransactions = require('./pending-transactions/pending-transactions');
+const priceSpreadRatio = require('./price-spread-ratio/price-spread-ratio');
 
 const txHandlers = [
   adminEvents,
@@ -12,6 +13,7 @@ const txHandlers = [
 const blockHandlers = [
   accountBalance,
   pendingTransactions,
+  priceSpreadRatio,
 ];
 
 // returns findings over all txHandler's handleTransaction functions

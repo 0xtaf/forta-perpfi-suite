@@ -1,4 +1,5 @@
 const ethers = require('ethers');
+const BigNumber = require('bignumber.js');
 const {
   Finding, FindingSeverity, FindingType, getJsonRpcUrl,
 } = require('forta-agent');
@@ -33,16 +34,17 @@ const usdcAbi = [
   },
 ];
 
-// calculate the percentage change between two values
+// calculate the percentage change between two BigNumber values
 function calcPercentChange(a, b) {
-  return Math.abs((a - b) / a) * 100;
+  const delta = a.minus(b).absoluteValue();
+  return delta.div(a).multipliedBy(100);
 }
 
 // helper function to create alerts
 function createAlert(address, name, balance, pctChange, blockWindow, everestId) {
   return Finding.fromObject({
     name: 'Perp.Fi USDC Balance Change',
-    description: `The USDC balance of the ${name} account changed by ${pctChange} `
+    description: `The USDC balance of the ${name} account changed by ${pctChange}% `
     + `in the past ${blockWindow} blocks`,
     alertId: 'AE-PERPFI-USDC-BALANCE-CHANGE',
     protocol: 'Perp.Fi',
@@ -51,8 +53,8 @@ function createAlert(address, name, balance, pctChange, blockWindow, everestId) 
     everestId,
     metadata: {
       address,
-      balance,
-      pctChange,
+      balance: balance.toString(),
+      pctChange: pctChange.toString(),
     },
   });
 }
@@ -75,7 +77,10 @@ function provideHandleBlock(data) {
       //        USDC_ADDRESS is set incorrectly in agent-config.json
       let balance;
       try {
-        balance = await usdcContract.balanceOf(address);
+        const balanceEthersBN = await usdcContract.balanceOf(address);
+
+        // convert from ethers BigNumber to JS BigNumber
+        balance = new BigNumber(balanceEthersBN.toString());
       } catch (err) {
         console.error(err);
       } finally {
@@ -94,15 +99,17 @@ function provideHandleBlock(data) {
       //
       if (addresses[address].balanceHistory.length === blockWindow + 1) {
         // check oldest balance against current balance
-        // (this ignores outlier changes that happened in the interval between these 2 points)
         const oldBalance = addresses[address].balanceHistory[0];
+
+        // calculate the percentage change in the balance
+        // skip the check if we have an 'undefined' value from a failed balanceOf() call
         if ((oldBalance !== undefined) && (balance !== undefined)) {
           const pctChange = calcPercentChange(oldBalance, balance);
 
-          // emit a finding if the threshold was exceeded
-          if (pctChange > pctChangeThreshold) {
+          // emit a finding if the threshold was met or exceeded
+          if (pctChange >= pctChangeThreshold) {
             const { name } = addresses[address];
-            createAlert(address, name, balance, pctChange, blockWindow, everestId);
+            findings.push(createAlert(address, name, balance, pctChange, blockWindow, everestId));
           }
         }
 
@@ -157,5 +164,4 @@ module.exports = {
   initialize: provideInitialize(initializeData),
   provideHandleBlock,
   handleBlock: provideHandleBlock(initializeData),
-  createAlert,
 };

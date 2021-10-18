@@ -5,10 +5,10 @@
     "failedTxLimit": 10
   },
   "accountBalance": {
-    "maker": 3,
-    "arbitrageur": 3,
-    "cancelOrderKeeper": 3,
-    "liquidator": 3
+    "Maker": 3,
+    "Arbitrageur": 3,
+    "CancelOrderKeeper": 3,
+    "Liquidator": 3
    },
   "adminEvents" : {
     "AccountBalance": {

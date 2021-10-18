@@ -1,5 +1,6 @@
 // transaction handlers
 const adminEvents = require('./admin-events/admin-events');
+const failedTransactions = require('./failed-transactions/failed-transactions');
 
 // block handlers
 const accountBalance = require('./account-balance/account-balance');
@@ -7,6 +8,7 @@ const pendingTransactions = require('./pending-transactions/pending-transactions
 
 const txHandlers = [
   adminEvents,
+  failedTransactions,
 ];
 
 const blockHandlers = [

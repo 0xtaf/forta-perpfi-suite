@@ -1,5 +1,9 @@
 {
   "PERPFI_EVEREST_ID": "0xb0b67f51aee86a23574868bf08622c4bddb4ce12",
+  "failedTransactions": {
+    "blockWindow": 4,
+    "failedTxLimit": 10
+  },
   "accountBalance": {
     "maker": 3,
     "arbitrageur": 3,

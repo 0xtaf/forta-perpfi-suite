@@ -1,15 +1,20 @@
 // transaction handlers
-// <none>
+const adminEvents = require('./admin-events/admin-events');
+const failedTransactions = require('./failed-transactions/failed-transactions');
 
 // block handlers
+const accountBalance = require('./account-balance/account-balance');
+const pendingTransactions = require('./pending-transactions/pending-transactions');
 const usdcBalanceChange = require('./usdc-balance-change/usdc-balance-change');
 
 const txHandlers = [
-  // list txHandlers like this `optimisticOracle,` +++++ REMOVE ME +++++
-  // <none>
+  adminEvents,
+  failedTransactions,
 ];
 
 const blockHandlers = [
+  accountBalance,
+  pendingTransactions,
   usdcBalanceChange,
 ];
 

@@ -1,3 +1,8 @@
 {
-  "perpfiEverestId": "0xb0b67f51aee86a23574868bf08622c4bddb4ce12"
+  "PERPFI_EVEREST_ID": "0xb0b67f51aee86a23574868bf08622c4bddb4ce12",
+  "usdcBalanceChange": {
+    "USDC_ADDRESS" : "0xeb8f08a975ab53e34d8a0330e0d34de942c95926",
+    "blockWindow": 4,
+    "pctChangeThreshold": 10
+  }
 }

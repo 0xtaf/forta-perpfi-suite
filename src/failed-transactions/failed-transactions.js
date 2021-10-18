@@ -4,6 +4,7 @@ const {
 
 // addresses we are interested in monitoring
 const accountAddresses = require('../../account-addresses.json');
+
 const config = require('../../agent-config.json');
 
 const initializeData = {};
@@ -40,11 +41,11 @@ function provideHandleTransaction(data) {
     const {
       blockWindow, everestId, addresses, failedTxs, failedTxLimit,
     } = data;
-    if (!addresses) throw new Error("called handler before initializing");
+    if (!addresses) throw new Error('called handler before initializing');
 
     const findings = [];
 
-    // we are only interested with failed transactions
+    // we are only interested in failed transactions
     if (txEvent.receipt.status) {
       return findings;
     }

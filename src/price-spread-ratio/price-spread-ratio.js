@@ -48,42 +48,36 @@ function provideInitialize(data) {
     // initialize the block timestamp
     data.blockTimestamp = 0;
 
-    // set up a provider if one has not already been created
-    if (!data.provider) {
-      // create an ethers provider for calling contract read-only methods
-      data.provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
-    }
+    // create an ethers provider for calling contract read-only methods
+    data.provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
 
-    // set up the contract data objects if they are have not already been created
-    if (!data.contractNames) {
-      // get the contract names that we are interested in
-      data.contractNames = Object.keys(data.config);
+    // get the contract names that we are interested in
+    data.contractNames = Object.keys(data.config);
 
-      // load the array of contract addresses, abis, and ethers interfaces
-      data.contractsData = common.getContractAddressesAbis(data.contractNames);
+    // load the array of contract addresses, abis, and ethers interfaces
+    data.contractsData = common.getContractAddressesAbis(data.contractNames);
 
-      // create an ethers contract object for each contract and store with the other contract data
-      // also extract the FTX url corresponding to each address and store it with the contract data
-      data.contractsData.forEach((contractData) => {
-        // create and store the ethers contract
-        contractData.contract = new ethers.Contract(
-          contractData.address,
-          contractData.contractAbi,
-          data.provider,
-        );
+    // create an ethers contract object for each contract and store with the other contract data
+    // also extract the FTX url corresponding to each address and store it with the contract data
+    data.contractsData.forEach((contractData) => {
+      // create and store the ethers contract
+      contractData.contract = new ethers.Contract(
+        contractData.address,
+        contractData.contractAbi,
+        data.provider,
+      );
 
-        // get the FTX url and store it
-        contractData.ftxUrl = data.config[contractData.name].ftxUrl;
+      // get the FTX url and store it
+      contractData.ftxUrl = data.config[contractData.name].ftxUrl;
 
-        // get the upper and lower limits of the price spread ratio and store them as BigNumbers
-        const contractName = contractData.name;
-        contractData.upperLimitPercent = new BigNumber(data.config[contractName].upperLimitPercent);
-        contractData.lowerLimitPercent = new BigNumber(data.config[contractName].lowerLimitPercent);
+      // get the upper and lower limits of the price spread ratio and store them as BigNumbers
+      const contractName = contractData.name;
+      contractData.upperLimitPercent = new BigNumber(data.config[contractName].upperLimitPercent);
+      contractData.lowerLimitPercent = new BigNumber(data.config[contractName].lowerLimitPercent);
 
-        // store the time threshold for how long the price spread ratio must be outside the limits
-        contractData.timeThresholdSeconds = BigInt(data.config[contractName].timeThresholdSeconds);
-      });
-    }
+      // store the time threshold for how long the price spread ratio must be outside the limits
+      contractData.timeThresholdSeconds = BigInt(data.config[contractName].timeThresholdSeconds);
+    });
     /* eslint-enable no-param-reassign */
   };
 }

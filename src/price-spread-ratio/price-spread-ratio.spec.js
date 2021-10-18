@@ -45,6 +45,7 @@ describe('price spread ratio monitoring', () => {
   let initialize;
   let handleBlock;
   let data;
+  let blockEvent;
 
   // for the tests, we will keep the mocked FTX API price constant and change the mocked price
   // returned by the perpetual finance contract
@@ -60,22 +61,21 @@ describe('price spread ratio monitoring', () => {
     // reset the price returned by the mocked FTX API
     mockFtxResponse.data.result.price = mockFtxPrice;
 
-    // initialize the data structure
-    data = {
-      provider: {},
-      contractNames: [
-        mockContractName,
-      ],
-      contractsData: [
-        {
-          name: mockContractName,
-          address: mockContractAddress,
-          timeThresholdSeconds: BigInt(100),
-        },
-      ],
-    };
+    data = {};
+
     initialize = provideInitialize(data);
     await initialize();
+
+    // initialize the data structure
+    data.provider = {};
+    data.contractNames = [
+      mockContractName,
+    ];
+    data.contractsData = [{
+      name: mockContractName,
+      address: mockContractAddress,
+      timeThresholdSeconds: BigInt(100),
+    }];
 
     // set up the upper and lower limits to make the price spread ratio acceptable
     data.contractsData[0].upperLimitPercent = new BigNumber(upperLimitPercent);
@@ -83,6 +83,14 @@ describe('price spread ratio monitoring', () => {
 
     // create the handler
     handleBlock = provideHandleBlock(data);
+
+    // create a block event that will initialize the timestamp on the contract data object
+    blockEvent = {
+      block: {
+        timestamp: 1,
+      },
+    };
+
   });
 
   // reset function call count after each test
@@ -99,13 +107,6 @@ describe('price spread ratio monitoring', () => {
       // set up the mock contract methods to return the price information
       data.contractsData[0].contract = {
         getIndexPrice: jest.fn().mockResolvedValue(mockPerpPriceWei),
-      };
-
-      // create a block event that will initialize the timestamp on the contract data object
-      const blockEvent = {
-        block: {
-          timestamp: 1,
-        },
       };
 
       // run the handler
@@ -136,12 +137,6 @@ describe('price spread ratio monitoring', () => {
         getIndexPrice: jest.fn().mockResolvedValue(mockPerpPriceWei),
       };
 
-      const blockEvent = {
-        block: {
-          timestamp: 1,
-        },
-      };
-
       // run the handler
       let findings = await handleBlock(blockEvent);
 
@@ -168,12 +163,6 @@ describe('price spread ratio monitoring', () => {
       // set up the mock contract methods to return the price information
       data.contractsData[0].contract = {
         getIndexPrice: jest.fn().mockResolvedValue(mockPerpPriceWei),
-      };
-
-      const blockEvent = {
-        block: {
-          timestamp: 1,
-        },
       };
 
       // run the handler
@@ -217,12 +206,6 @@ describe('price spread ratio monitoring', () => {
       // set up the mock contract methods to return the price information
       data.contractsData[0].contract = {
         getIndexPrice: jest.fn().mockResolvedValue(mockPerpPriceWei),
-      };
-
-      const blockEvent = {
-        block: {
-          timestamp: 1,
-        },
       };
 
       // run the handler

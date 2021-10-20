@@ -1,5 +1,6 @@
 // transaction handlers
 const adminEvents = require('./admin-events/admin-events');
+const failedTransactions = require('./failed-transactions/failed-transactions');
 
 // block handlers
 const accountBalance = require('./account-balance/account-balance');
@@ -8,6 +9,7 @@ const priceSpreadRatio = require('./price-spread-ratio/price-spread-ratio');
 
 const txHandlers = [
   adminEvents,
+  failedTransactions,
 ];
 
 const blockHandlers = [

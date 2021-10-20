@@ -4,13 +4,13 @@ const { Finding, FindingSeverity, FindingType } = require('forta-agent');
 const common = require('../common');
 
 // load any agent configuration parameters
-const { PERPFI_EVEREST_ID, adminEvents } = require('../../agent-config.json');
+const config = require('../../agent-config.json');
 
 // set up a variable to hold initialization data used in the handler
 const initializeData = {};
 
 // get the Array of events for a given contract
-function getEvents(contractName) {
+function getEvents(contractName, adminEvents) {
   const events = adminEvents[contractName];
   if (events === undefined) {
     return {}; // no events for this contract
@@ -32,7 +32,15 @@ function extractEventArgs(args) {
 }
 
 // helper function to create alerts
-function createAlert(eventName, contractName, contractAddress, eventType, eventSeverity, args) {
+function createAlert(
+  eventName,
+  contractName,
+  contractAddress,
+  eventType,
+  eventSeverity,
+  args,
+  everestId,
+) {
   const eventArgs = extractEventArgs(args);
   return Finding.fromObject({
     name: 'Perpetual Finance Admin Event',
@@ -40,7 +48,7 @@ function createAlert(eventName, contractName, contractAddress, eventType, eventS
     alertId: 'AE-PERPFI-ADMIN-EVENT',
     type: FindingType[eventType],
     severity: FindingSeverity[eventSeverity],
-    everestId: PERPFI_EVEREST_ID,
+    everestId,
     protocol: 'Perp.Fi',
     metadata: {
       contractName,
@@ -69,18 +77,23 @@ function filterAndParseLogs(logs, address, iface, eventNames) {
 
 function provideInitialize(data) {
   return async function initialize() {
+    /* eslint-disable no-param-reassign */
+    // assign configurable fields
+    data.adminEvents = config.adminEvents;
+    data.everestId = config.PERPFI_EVEREST_ID;
+
     // get the contract names that have events that we wish to monitor
-    const contractNames = Object.keys(adminEvents);
+    const contractNames = Object.keys(data.adminEvents);
 
     // load the contract addresses, abis, and ethers interfaces
-    // eslint-disable-next-line no-param-reassign
     data.contracts = common.getContractAddressesAbis(contractNames);
+    /* eslint-enable no-param-reassign */
   };
 }
 
 function provideHandleTransaction(data) {
   return async function handleTransaction(txEvent) {
-    const { contracts } = data;
+    const { adminEvents, contracts, everestId } = data;
     if (!contracts) throw new Error('handleTransaction called before initialization');
 
     const findings = [];
@@ -88,7 +101,7 @@ function provideHandleTransaction(data) {
     // iterate over each contract name to get the address and events
     contracts.forEach((contract) => {
       // for each contract look up the events of interest
-      const events = getEvents(contract.name);
+      const events = getEvents(contract.name, adminEvents);
       const eventNames = Object.keys(events);
 
       // filter down to only the events we want to alert on
@@ -108,6 +121,7 @@ function provideHandleTransaction(data) {
           events[parsedLog.name].type,
           events[parsedLog.name].severity,
           parsedLog.args,
+          everestId,
         ));
       });
     });

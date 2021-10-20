@@ -17,7 +17,7 @@ function createAlert(name, address, failedTxs, blockWindow, everestId) {
     + `in the past ${blockWindow} blocks`,
     protocol: 'Perp.Fi',
     alertId: 'AE-PERPFI-FAILED-TRANSACTIONS',
-    severity: FindingSeverity.Medium,
+    severity: FindingSeverity.Critical,
     type: FindingType.Info,
     everestId,
     metadata: {

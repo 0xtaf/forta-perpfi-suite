@@ -10,17 +10,17 @@ describe('account balance monitoring', () => {
     let everestId;
 
     const mockThresholds = {
-      maker: 3,
-      arbitrageur: 3,
-      cancelOrderKeeper: 3,
-      liquidator: 3,
+      Maker: 3,
+      Arbitrageur: 3,
+      CancelOrderKeeper: 3,
+      Liquidator: 3,
     };
 
     const mockAddresses = {
-      maker: '0',
-      arbitrageur: '1',
-      cancelOrderKeeper: '2',
-      liquidator: '3',
+      Maker: '0',
+      Arbitrageur: '1',
+      CancelOrderKeeper: '2',
+      Liquidator: '3',
     };
 
     beforeEach(async () => {
@@ -70,10 +70,10 @@ describe('account balance monitoring', () => {
 
       // Assertions
       const alerts = [
-        createAlert('maker', 4, mockThresholds.maker, everestId),
-        createAlert('arbitrageur', 4, mockThresholds.arbitrageur, everestId),
-        createAlert('cancelOrderKeeper', 4, mockThresholds.cancelOrderKeeper, everestId),
-        createAlert('liquidator', 4, mockThresholds.liquidator, everestId),
+        createAlert('Maker', 4, mockThresholds.Maker, everestId),
+        createAlert('Arbitrageur', 4, mockThresholds.Arbitrageur, everestId),
+        createAlert('CancelOrderKeeper', 4, mockThresholds.CancelOrderKeeper, everestId),
+        createAlert('Liquidator', 4, mockThresholds.Liquidator, everestId),
       ];
 
       expect(findings).toStrictEqual(alerts);
@@ -101,7 +101,7 @@ describe('account balance monitoring', () => {
 
       // Assertions
       const alerts = [
-        createAlert('maker', 2900000000000000000, mockThresholds.maker, everestId),
+        createAlert('Maker', 2900000000000000000, mockThresholds.Maker, everestId),
       ];
 
       expect(findings).toStrictEqual(alerts);

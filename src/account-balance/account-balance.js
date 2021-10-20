@@ -31,7 +31,7 @@ function createAlert(accountName, accountBalance, thresholdEth, everestId) {
     name: 'Perp.Fi Low Account Balance',
     description: `The ${accountName} account has a balance below ${thresholdEth} ETH`,
     alertId: 'AE-PERPFI-LOW-ACCOUNT-BALANCE',
-    severity: FindingSeverity.Medium,
+    severity: FindingSeverity.Critical,
     type: FindingType.Degraded,
     protocol: 'Perp.Fi',
     everestId,

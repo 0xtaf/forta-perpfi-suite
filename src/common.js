@@ -29,12 +29,12 @@ function getContractAddressesAbis(contractNames) {
         address = protocolData.contracts[contractName].address.toLowerCase();
       }
       // eslint-disable-next-line global-require,import/no-dynamic-require
-      const { abi } = require('../abis/BaseToken.json');
+      const { abi } = require('../abi/BaseToken.json');
       contractAbi = abi;
     } else {
       address = protocolData.contracts[contractName].address.toLowerCase();
       // eslint-disable-next-line global-require,import/no-dynamic-require
-      const { abi } = require(`../abis/${contractName}.json`);
+      const { abi } = require(`../abi/${contractName}.json`);
       contractAbi = abi;
     }
 

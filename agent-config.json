@@ -5,10 +5,10 @@
     "failedTxLimit": 10
   },
   "accountBalance": {
-    "maker": 3,
-    "arbitrageur": 3,
-    "cancelOrderKeeper": 3,
-    "liquidator": 3
+    "Maker": 3,
+    "Arbitrageur": 3,
+    "CancelOrderKeeper": 3,
+    "Liquidator": 3
    },
   "adminEvents" : {
     "AccountBalance": {
@@ -72,5 +72,20 @@
       "lowerLimitPercent": -3,
       "ftxUrl": "https://ftx.com/api/markets/ETH/USD"
     }
+  },
+  "usdcBalanceChange": {
+    "USDC_ADDRESS" : "0x40DFcFEB94575Aaf4a97EBE020850e13f84a46E5",
+    "blockWindow": 4,
+    "changeThresholdPercent": -10,
+    "accounts": [
+      "Arbitrageur",
+      "CancelOrderKeeper",
+      "Liquidator",
+      "Maker"
+    ],
+    "contracts": [
+      "InsuranceFund",
+      "Vault"
+    ]
   }
 }

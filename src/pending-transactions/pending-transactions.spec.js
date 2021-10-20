@@ -89,7 +89,7 @@ describe('Perpetual Finance pending transaction agent', () => {
 
       expect(findings).toStrictEqual([]);
 
-      const mockAddress = accountAddresses.maker;
+      const mockAddress = accountAddresses.Maker;
       const mockNumPendingTx = data.config.TX_THRESHOLD + 1;
 
       // now that the first blockEvent has been handled (with non-zero timestamp), the pending
@@ -136,9 +136,9 @@ describe('Perpetual Finance pending transaction agent', () => {
 
       expect(findings).toStrictEqual([]);
 
-      const mockAddress = accountAddresses.maker;
+      const mockAddress = accountAddresses.Maker;
       const mockNumPendingTx = data.config.TX_THRESHOLD + 1;
-      const mockAccountName = 'maker';
+      const mockAccountName = 'Maker';
 
       // now that the first blockEvent has been handled (with non-zero timestamp), the pending
       // transactions will added to the pendingTransactions array
@@ -167,14 +167,14 @@ describe('Perpetual Finance pending transaction agent', () => {
       const expectedFinding = Finding.fromObject({
         name: 'Perp.Fi High Pending Transaction Count',
         description:
-        `The ${mockAccountName} had ${mockNumPendingTx} pending transactions in one minute`,
+        `The ${mockAccountName} account had ${mockNumPendingTx} pending transactions in one minute`,
         alertId: 'AE-PERPFI-HIGH-PENDING-TX',
         protocol: 'Perp.Fi',
-        severity: FindingSeverity.Low,
+        severity: FindingSeverity.Critical,
         type: FindingType.Degraded,
         everestId: '0xb0b67f51aee86a23574868bf08622c4bddb4ce12',
         metadata: {
-          accountName: 'maker',
+          accountName: 'Maker',
           accountAddress: '0x2E8f9B6294aAdef4CE2Fc5acf78cbc04396240EA',
           numPending: mockNumPendingTx,
         },

@@ -17,10 +17,10 @@ const NANOSECONDS_PER_SECOND = BigInt(1e9);
 function createAlert(accountName, accountAddress, numPending) {
   return Finding.fromObject({
     name: 'Perp.Fi High Pending Transaction Count',
-    description: `The ${accountName} had ${numPending} pending transactions in one minute`,
+    description: `The ${accountName} account had ${numPending} pending transactions in one minute`,
     alertId: 'AE-PERPFI-HIGH-PENDING-TX',
     protocol: 'Perp.Fi',
-    severity: FindingSeverity.Low,
+    severity: FindingSeverity.Critical,
     type: FindingType.Degraded,
     everestId: config.PERPFI_EVEREST_ID,
     metadata: {

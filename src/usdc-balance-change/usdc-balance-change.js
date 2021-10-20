@@ -32,9 +32,9 @@ config.usdcBalanceChange.contracts.forEach((name) => {
 const { abi: usdcAbi } = require('../../abi/interface/IERC20Metadata.json');
 
 // calculate the percentage change between two BigNumber values
-function calcPercentChange(a, b) {
-  const delta = a.minus(b).absoluteValue();
-  return delta.div(a).multipliedBy(100);
+function calcPercentChange(first, second) {
+  const delta = second.minus(first);
+  return delta.div(first).multipliedBy(100);
 }
 
 // helper function to create alerts
@@ -106,8 +106,8 @@ function provideHandleBlock(data) {
           if ((oldBalance !== undefined) && (balance !== undefined)) {
             const pctChange = calcPercentChange(oldBalance, balance);
 
-            // emit a finding if the threshold was met or exceeded
-            if (pctChange >= pctChangeThreshold) {
+            // emit a finding if the USDC funds decreased by more than the threshold
+            if (pctChange < (-1 * pctChangeThreshold)) {
               const { name } = addresses[address];
               findings.push(createAlert(address, name, balance, pctChange, blockWindow, everestId));
 

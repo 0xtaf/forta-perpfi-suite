@@ -62,7 +62,7 @@
   "usdcBalanceChange": {
     "USDC_ADDRESS" : "0x40DFcFEB94575Aaf4a97EBE020850e13f84a46E5",
     "blockWindow": 4,
-    "pctChangeThreshold": 10,
+    "pctChangeThreshold": -10,
     "accounts": [
       "Arbitrageur",
       "CancelOrderKeeper",

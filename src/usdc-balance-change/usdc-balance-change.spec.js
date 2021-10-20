@@ -78,13 +78,13 @@ describe('USDC balance change', () => {
 
     it('when all balance changes are below the threshold', async () => {
       // simulate a changing balance under the threshold
-      // 5.0, 5.1, 5.2, 5.3, 5.4 USDC
+      // 5.4, 5.3, 5.2, 5.1, 5.0 USDC
       mockUsdcContract.balanceOf = jest.fn()
-        .mockResolvedValueOnce(ethers.BigNumber.from(5000000))
-        .mockResolvedValueOnce(ethers.BigNumber.from(5100000))
-        .mockResolvedValueOnce(ethers.BigNumber.from(5200000))
+        .mockResolvedValueOnce(ethers.BigNumber.from(5400000))
         .mockResolvedValueOnce(ethers.BigNumber.from(5300000))
-        .mockResolvedValueOnce(ethers.BigNumber.from(5400000));
+        .mockResolvedValueOnce(ethers.BigNumber.from(5200000))
+        .mockResolvedValueOnce(ethers.BigNumber.from(5100000))
+        .mockResolvedValueOnce(ethers.BigNumber.from(5000000));
 
       // get N balance updates (N=blockWindow)
       await iterateHandlerExpectEmpty(data.blockWindow);
@@ -99,7 +99,7 @@ describe('USDC balance change', () => {
       const { balanceHistory } = data.addresses[TEST_ADDRESS];
 
       // the current balance should match the last call to balanceOf()
-      expect(balanceHistory.slice(-1)[0]).toStrictEqual(new BigNumber(5400000));
+      expect(balanceHistory.slice(-1)[0]).toStrictEqual(new BigNumber(5000000));
 
       // there should be 1 less balance recorded for each address at this point
       // (the oldest was shifted out of the balance array for the next cycle)
@@ -109,16 +109,16 @@ describe('USDC balance change', () => {
     it('when the balance change is above the threshold but outside the block window', async () => {
       // simulate a changing balance over the threshold, but too slow to trigger
       // within the block window
-      // 6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7 USDC
+      // 6.7, 6.6, 6.5, 6.4, 6.3, 6.2, 6.1, 6.0 USDC
       mockUsdcContract.balanceOf = jest.fn()
-        .mockResolvedValueOnce(ethers.BigNumber.from(6000000))
-        .mockResolvedValueOnce(ethers.BigNumber.from(6100000))
-        .mockResolvedValueOnce(ethers.BigNumber.from(6200000))
-        .mockResolvedValueOnce(ethers.BigNumber.from(6300000))
-        .mockResolvedValueOnce(ethers.BigNumber.from(6400000))
-        .mockResolvedValueOnce(ethers.BigNumber.from(6500000))
+        .mockResolvedValueOnce(ethers.BigNumber.from(6700000))
         .mockResolvedValueOnce(ethers.BigNumber.from(6600000))
-        .mockResolvedValueOnce(ethers.BigNumber.from(6700000));
+        .mockResolvedValueOnce(ethers.BigNumber.from(6500000))
+        .mockResolvedValueOnce(ethers.BigNumber.from(6400000))
+        .mockResolvedValueOnce(ethers.BigNumber.from(6300000))
+        .mockResolvedValueOnce(ethers.BigNumber.from(6200000))
+        .mockResolvedValueOnce(ethers.BigNumber.from(6100000))
+        .mockResolvedValueOnce(ethers.BigNumber.from(6000000));
 
       // get 8 balance updates
       // there should be no findings
@@ -128,17 +128,15 @@ describe('USDC balance change', () => {
       const { balanceHistory } = data.addresses[TEST_ADDRESS];
 
       // the current balance should match the last call to balanceOf()
-      expect(balanceHistory.slice(-1)[0]).toStrictEqual(new BigNumber(6700000));
+      expect(balanceHistory.slice(-1)[0]).toStrictEqual(new BigNumber(6000000));
 
       // there should be 1 less balance recorded for each address at this point
       // (the oldest was shifted out of the balance array for the next cycle)
       expect(balanceHistory.length).toStrictEqual(data.blockWindow);
     });
-  });
 
-  describe('reports', () => {
-    it('when the balance change is above the threshold and within the block window', async () => {
-      // simulate a changing balance over the threshold
+    it('when a positive balance change is above the threshold and within the block window', async () => {
+      // simulate an increasing balance over the threshold
       // 3.0, 3.1, 3.2, 3.3, 3.6 USDC
       mockUsdcContract.balanceOf = jest.fn()
         .mockResolvedValueOnce(ethers.BigNumber.from(3000000))
@@ -154,10 +152,42 @@ describe('USDC balance change', () => {
       const findings = await handleBlock();
 
       // check findings
+      expect(findings).toStrictEqual([]);
+
+      // do some additional checks on the balance history
+      const { balanceHistory } = data.addresses[TEST_ADDRESS];
+
+      // the current balance should match the last call to balanceOf()
+      expect(balanceHistory.slice(-1)[0]).toStrictEqual(new BigNumber(3600000));
+
+      // there should be 1 less balance recorded for each address at this point
+      // (the oldest was shifted out of the balance array for the next cycle)
+      expect(balanceHistory.length).toStrictEqual(data.blockWindow);
+    });
+  });
+
+  describe('reports', () => {
+    it('when a negative balance change is above the threshold and within the block window', async () => {
+      // simulate a decreasing balance over the threshold
+      // 2.8, 2.7, 2.5, 2.3, 2.1 USDC
+      mockUsdcContract.balanceOf = jest.fn()
+        .mockResolvedValueOnce(ethers.BigNumber.from(2800000))
+        .mockResolvedValueOnce(ethers.BigNumber.from(2700000))
+        .mockResolvedValueOnce(ethers.BigNumber.from(2500000))
+        .mockResolvedValueOnce(ethers.BigNumber.from(2300000))
+        .mockResolvedValueOnce(ethers.BigNumber.from(2100000));
+
+      // get N balance updates (N=blockWindow)
+      await iterateHandlerExpectEmpty(data.blockWindow);
+
+      // the next block event will give us N+1 balances --> will trigger a balance check
+      const findings = await handleBlock();
+
+      // check findings
       expect(findings).toStrictEqual([
         Finding.fromObject({
           name: 'Perp.Fi USDC Balance Change',
-          description: 'The USDC balance of the Test account changed by 20% in the past 4 blocks',
+          description: 'The USDC balance of the Test account changed by -25% in the past 4 blocks',
           alertId: 'AE-PERPFI-USDC-BALANCE-CHANGE',
           protocol: 'Perp.Fi',
           severity: FindingSeverity.Critical,
@@ -165,8 +195,8 @@ describe('USDC balance change', () => {
           everestId: '0xb0b67f51aee86a23574868bf08622c4bddb4ce12',
           metadata: {
             address: TEST_ADDRESS,
-            balance: '3600000',
-            pctChange: '20',
+            balance: '2100000',
+            pctChange: '-25',
           },
         }),
       ]);
@@ -175,7 +205,7 @@ describe('USDC balance change', () => {
       const { balanceHistory } = data.addresses[TEST_ADDRESS];
 
       // the current balance should match the last call to balanceOf()
-      expect(balanceHistory.slice(-1)[0]).toStrictEqual(new BigNumber(3600000));
+      expect(balanceHistory.slice(-1)[0]).toStrictEqual(new BigNumber(2100000));
 
       // there should be 1 less balance recorded for each address at this point
       // (the oldest was shifted out of the balance array for the next cycle)

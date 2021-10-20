@@ -5,6 +5,7 @@ const failedTransactions = require('./failed-transactions/failed-transactions');
 // block handlers
 const accountBalance = require('./account-balance/account-balance');
 const pendingTransactions = require('./pending-transactions/pending-transactions');
+const priceSpreadRatio = require('./price-spread-ratio/price-spread-ratio');
 const usdcBalanceChange = require('./usdc-balance-change/usdc-balance-change');
 
 const txHandlers = [
@@ -15,6 +16,7 @@ const txHandlers = [
 const blockHandlers = [
   accountBalance,
   pendingTransactions,
+  priceSpreadRatio,
   usdcBalanceChange,
 ];
 

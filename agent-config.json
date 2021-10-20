@@ -59,6 +59,19 @@
     "timeWindowSeconds": 60,
     "txThreshold": 10
   },
+  "priceSpreadRatio": {
+    "vBTC": {
+      "timeThresholdSeconds": 300,
+      "upperLimitPercent": 3,
+      "lowerLimitPercent": -3,
+      "ftxUrl": "https://ftx.com/api/markets/BTC/USD"
+    },
+    "vETH": {
+      "timeThresholdSeconds": 300,
+      "upperLimitPercent": 3,
+      "lowerLimitPercent": -3,
+      "ftxUrl": "https://ftx.com/api/markets/ETH/USD"
+    }
   "usdcBalanceChange": {
     "USDC_ADDRESS" : "0x40DFcFEB94575Aaf4a97EBE020850e13f84a46E5",
     "blockWindow": 4,

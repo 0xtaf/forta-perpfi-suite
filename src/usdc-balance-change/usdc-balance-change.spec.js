@@ -25,7 +25,7 @@ describe('USDC balance change', () => {
 
     // assign values for testing
     data.blockWindow = 4;
-    data.pctChangeThreshold = 10;
+    data.changeThresholdPercent = 10;
 
     // reset the addresses object
     // use a single address for testing

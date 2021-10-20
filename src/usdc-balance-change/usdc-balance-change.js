@@ -59,7 +59,7 @@ function createAlert(address, name, balance, pctChange, blockWindow, everestId) 
 function provideHandleBlock(data) {
   return async function handleBlock() {
     const {
-      blockWindow, everestId, addresses, pctChangeThreshold, usdcContract,
+      blockWindow, everestId, addresses, changeThresholdPercent, usdcContract,
     } = data;
     if (!addresses) {
       throw new Error('Called handler before initializing');
@@ -107,7 +107,7 @@ function provideHandleBlock(data) {
             const pctChange = calcPercentChange(oldBalance, balance);
 
             // emit a finding if the USDC funds decreased by more than the threshold
-            if (pctChange < (-1 * pctChangeThreshold)) {
+            if (pctChange < (-1 * changeThresholdPercent)) {
               const { name } = addresses[address];
               findings.push(createAlert(address, name, balance, pctChange, blockWindow, everestId));
 
@@ -157,9 +157,12 @@ function provideInitialize(data) {
     data.usdcContract = new ethers.Contract(data.USDC_ADDRESS, usdcAbi, data.provider);
 
     // assign configurable fields
-    data.blockWindow = config.usdcBalanceChange.blockWindow;
-    data.pctChangeThreshold = config.usdcBalanceChange.pctChangeThreshold;
     data.everestId = config.PERPFI_EVEREST_ID;
+    data.blockWindow = config.usdcBalanceChange.blockWindow;
+    // since balance increase detection is not supported, for changeThresholdPercent handle the
+    // possibility of positive and negative values
+    // e.g. the user may enter 10 or -10, but the result will be the same
+    data.changeThresholdPercent = Math.abs(config.usdcBalanceChange.changeThresholdPercent);
     /* eslint-enable no-param-reassign */
   };
 }

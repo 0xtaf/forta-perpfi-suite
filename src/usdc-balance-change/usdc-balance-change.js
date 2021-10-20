@@ -140,9 +140,9 @@ function provideInitialize(data) {
     data.provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
 
     // USDC contract addresses for testing:
-    // Mainnet: 0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48
-    // Rinkeby: 0xeb8f08a975ab53e34d8a0330e0d34de942c95926
-    // Arbitrum: 0xff970a61a04b1ca14834a43f5de4533ebddb5cc8 (check with arbiscan.io)
+    // Mainnet: 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48 (official)
+    // Rinkeby: 0x40DFcFEB94575Aaf4a97EBE020850e13f84a46E5
+    // Arbitrum Rinkeby: 0x84B12ABC7E4B6C82211BF2E1DCDb4D759C1623e3
     data.USDC_ADDRESS = config.usdcBalanceChange.USDC_ADDRESS;
 
     // create a Contract object for querying the USDC contract

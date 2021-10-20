@@ -72,6 +72,7 @@
       "lowerLimitPercent": -3,
       "ftxUrl": "https://ftx.com/api/markets/ETH/USD"
     }
+  },
   "usdcBalanceChange": {
     "USDC_ADDRESS" : "0x40DFcFEB94575Aaf4a97EBE020850e13f84a46E5",
     "blockWindow": 4,

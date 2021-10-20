@@ -3,8 +3,8 @@ const BigNumber = require('bignumber.js');
 
 // mock response from FTX API
 const mockFtxResponse = {
-  status: 200,
   data: {
+    success: true,
     result: {
       price: 0,
     },
@@ -90,12 +90,6 @@ describe('price spread ratio monitoring', () => {
         timestamp: 1,
       },
     };
-
-  });
-
-  // reset function call count after each test
-  afterEach(() => {
-    axios.get.mockClear();
   });
 
   describe('handleBlock', () => {
@@ -127,7 +121,7 @@ describe('price spread ratio monitoring', () => {
       expect(findings).toStrictEqual([]);
     });
 
-    it('returns empty findings if the price spread ratio it beyond the threshold but not enough time has elapsed', async () => {
+    it('returns empty findings if the price spread ratio is beyond the threshold but not enough time has elapsed', async () => {
       // set up prices that will trigger an alert
       const mockPerpPrice = new BigNumber(102);
       const mockPerpPriceWei = mockPerpPrice.times(WEI_PER_ETHER);
@@ -143,7 +137,7 @@ describe('price spread ratio monitoring', () => {
       // check assertions
       expect(findings).toStrictEqual([]);
 
-      // intentionally set the next timestamp to be beyond the time threshold
+      // intentionally set the next timestamp to be within the time threshold
       blockEvent.block.timestamp += (Number(data.contractsData[0].timeThresholdSeconds) - 1);
 
       // run the handler again
@@ -172,7 +166,7 @@ describe('price spread ratio monitoring', () => {
       expect(findings).toStrictEqual([]);
 
       // intentionally set the next timestamp to be beyond the time threshold
-      blockEvent.block.timestamp = 102;
+      blockEvent.block.timestamp += (1 + Number(data.contractsData[0].timeThresholdSeconds));
 
       // run the handler again
       findings = await handleBlock(blockEvent);
@@ -215,7 +209,7 @@ describe('price spread ratio monitoring', () => {
       expect(findings).toStrictEqual([]);
 
       // intentionally set the next timestamp to be beyond the time threshold
-      blockEvent.block.timestamp = 102;
+      blockEvent.block.timestamp += (1 + Number(data.contractsData[0].timeThresholdSeconds));
 
       // run the handler again
       findings = await handleBlock(blockEvent);

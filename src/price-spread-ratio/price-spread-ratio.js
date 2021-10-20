@@ -24,7 +24,7 @@ function createAlert(contractName, address, priceSpreadRatio, upper, lower, thre
     description: `Price spread ratio for ${contractName} exceeded bounds for ${timeDelta} seconds`,
     alertId: 'AE-PERPFI-PRICE-SPREAD-RATIO',
     protocol: 'Perp.Fi',
-    severity: FindingSeverity.Low,
+    severity: FindingSeverity.Critical,
     type: FindingType.Degraded,
     everestId: config.PERPFI_EVEREST_ID,
     metadata: {
@@ -101,21 +101,33 @@ function provideHandleBlock(data) {
       const { contract } = contractData;
 
       // get the price for each asset from the FTX
-      const ftxResponse = await axios.get(contractData.ftxUrl);
-
-      // check that we received a status 200
-      if (ftxResponse.status !== 200) {
+      let ftxResponse;
+      try {
+        ftxResponse = await axios.get(contractData.ftxUrl);
+      } catch {
         return;
       }
+
+      // if the request was not successful, bail
+      if (!ftxResponse.data.success) {
+        return;
+      }
+
       // convert price to a BigNumber
       const ftxPriceEth = new BigNumber(ftxResponse.data.result.price);
       // convert price to Wei to compare with price returned by contract method
       const ftxPriceWei = ftxPriceEth.times(WEI_PER_ETHER);
 
       // get the price for each asset from the contract
-      const interval = 0;
       // returned value is an ethers BigNumber
-      const perpPrice = await contract.getIndexPrice(interval);
+      let perpPrice;
+      try {
+        perpPrice = await contract.getIndexPrice(0);
+      } catch {
+        // if we had any errors, bail
+        return;
+      }
+
       // convert the price to a BigNumber
       const perpPriceWei = new BigNumber(perpPrice.toString());
 

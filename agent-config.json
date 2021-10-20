@@ -60,8 +60,18 @@
     "txThreshold": 10
   },
   "usdcBalanceChange": {
-    "USDC_ADDRESS" : "0xeb8f08a975ab53e34d8a0330e0d34de942c95926",
+    "USDC_ADDRESS" : "0x40DFcFEB94575Aaf4a97EBE020850e13f84a46E5",
     "blockWindow": 4,
-    "pctChangeThreshold": 10
+    "pctChangeThreshold": 10,
+    "accounts": [
+      "Arbitrageur",
+      "CancelOrderKeeper",
+      "Liquidator",
+      "Maker"
+    ],
+    "contracts": [
+      "InsuranceFund",
+      "Vault"
+    ]
   }
 }

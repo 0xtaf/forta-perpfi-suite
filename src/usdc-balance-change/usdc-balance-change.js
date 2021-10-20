@@ -9,30 +9,27 @@ const config = require('../../agent-config.json');
 
 const initializeData = {};
 
-// load account addresses to monitor
+// load account addresses
 const accountAddresses = require('../../account-addresses.json');
 
-// load contract addresses to monitor
-const contractAddresses = require('../../contract-addresses.json');
+// filter out accounts that were not in the 'accounts' list in the agent config file
+(Object.keys(accountAddresses)).forEach((name) => {
+  if (!config.usdcBalanceChange.accounts.includes(name)) {
+    delete accountAddresses[name];
+  }
+});
+
+// load contract addresses
+const { contracts } = require('../../protocol-data.json');
+
+// include only contracts that were in the 'contracts' list in the agent config file
+const contractAddresses = {};
+config.usdcBalanceChange.contracts.forEach((name) => {
+  contractAddresses[name] = contracts[name].address;
+});
 
 // provide ABI for USDC balanceOf()
-const usdcAbi = [
-  {
-    constant: true,
-    inputs: [{
-      name: 'account',
-      type: 'address',
-    }],
-    name: 'balanceOf',
-    outputs: [{
-      name: '',
-      type: 'uint256',
-    }],
-    payable: false,
-    stateMutability: 'view',
-    type: 'function',
-  },
-];
+const { abi: usdcAbi } = require('../../abi/interface/IERC20Metadata.json');
 
 // calculate the percentage change between two BigNumber values
 function calcPercentChange(a, b) {
@@ -95,7 +92,7 @@ function provideHandleBlock(data) {
       //
       //      balanceHistory = [BAL1, BAL2, BAL3, BAL4, BAL5]
       //
-      //      The time between when BAL1 and BAL5 was recorded will be approximately 1 minute
+      //      The time between when BAL1 and BAL5 were recorded will be approximately 1 minute
       //
       if (addresses[address].balanceHistory.length === blockWindow + 1) {
         // check oldest balance against current balance

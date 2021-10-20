@@ -170,7 +170,7 @@ describe('Perpetual Finance pending transaction agent', () => {
         `The ${mockAccountName} account had ${mockNumPendingTx} pending transactions in one minute`,
         alertId: 'AE-PERPFI-HIGH-PENDING-TX',
         protocol: 'Perp.Fi',
-        severity: FindingSeverity.Low,
+        severity: FindingSeverity.Critical,
         type: FindingType.Degraded,
         everestId: '0xb0b67f51aee86a23574868bf08622c4bddb4ce12',
         metadata: {

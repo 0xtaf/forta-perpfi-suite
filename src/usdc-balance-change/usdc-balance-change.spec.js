@@ -160,7 +160,7 @@ describe('USDC balance change', () => {
           description: 'The USDC balance of the Test account changed by 20% in the past 4 blocks',
           alertId: 'AE-PERPFI-USDC-BALANCE-CHANGE',
           protocol: 'Perp.Fi',
-          severity: FindingSeverity.Medium,
+          severity: FindingSeverity.Critical,
           type: FindingType.Suspicious,
           everestId: '0xb0b67f51aee86a23574868bf08622c4bddb4ce12',
           metadata: {

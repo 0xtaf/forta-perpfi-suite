@@ -20,7 +20,7 @@ function createAlert(accountName, accountAddress, numPending) {
     description: `The ${accountName} account had ${numPending} pending transactions in one minute`,
     alertId: 'AE-PERPFI-HIGH-PENDING-TX',
     protocol: 'Perp.Fi',
-    severity: FindingSeverity.Low,
+    severity: FindingSeverity.Critical,
     type: FindingType.Degraded,
     everestId: config.PERPFI_EVEREST_ID,
     metadata: {

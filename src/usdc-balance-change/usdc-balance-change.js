@@ -45,7 +45,7 @@ function createAlert(address, name, balance, pctChange, blockWindow, everestId) 
     + `in the past ${blockWindow} blocks`,
     alertId: 'AE-PERPFI-USDC-BALANCE-CHANGE',
     protocol: 'Perp.Fi',
-    severity: FindingSeverity.Medium,
+    severity: FindingSeverity.Critical,
     type: FindingType.Suspicious,
     everestId,
     metadata: {

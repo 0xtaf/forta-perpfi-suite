@@ -94,19 +94,27 @@ function provideHandleBlock(data) {
       //
       //      The time between when BAL1 and BAL5 were recorded will be approximately 1 minute
       //
-      if (addresses[address].balanceHistory.length === blockWindow + 1) {
-        // check oldest balance against current balance
-        const oldBalance = addresses[address].balanceHistory[0];
+      const sampleSize = addresses[address].balanceHistory.length;
+      if (sampleSize === blockWindow + 1) {
+        // check each previous balance against the current balance
+        let oldBalance;
+        for (let i = 0; i < sampleSize - 1; i++) {
+          oldBalance = addresses[address].balanceHistory[i];
 
-        // calculate the percentage change in the balance
-        // skip the check if we have an 'undefined' value from a failed balanceOf() call
-        if ((oldBalance !== undefined) && (balance !== undefined)) {
-          const pctChange = calcPercentChange(oldBalance, balance);
+          // calculate the percentage change in the balance
+          // skip the check if we have an 'undefined' value from a failed balanceOf() call
+          if ((oldBalance !== undefined) && (balance !== undefined)) {
+            const pctChange = calcPercentChange(oldBalance, balance);
 
-          // emit a finding if the threshold was met or exceeded
-          if (pctChange >= pctChangeThreshold) {
-            const { name } = addresses[address];
-            findings.push(createAlert(address, name, balance, pctChange, blockWindow, everestId));
+            // emit a finding if the threshold was met or exceeded
+            if (pctChange >= pctChangeThreshold) {
+              const { name } = addresses[address];
+              findings.push(createAlert(address, name, balance, pctChange, blockWindow, everestId));
+
+              // don't bother checking any more balances - we don't need to publish a finding
+              // for every threshold crossing that happened during this period
+              break;
+            }
           }
         }
 

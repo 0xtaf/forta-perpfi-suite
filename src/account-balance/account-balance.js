@@ -15,20 +15,18 @@ function provideInitialize(data) {
   return async function initialize() {
     /* eslint-disable no-param-reassign */
     // assign configurable fields
-    data.accountThresholds = config.accountBalance.accountThresholds;
     data.alertMinimumIntervalSeconds = config.accountBalance.alertMinimumIntervalSeconds;
     data.everestId = config.PERPFI_EVEREST_ID;
 
-    data.accountAddresses = accountAddressesData;
-    data.accountNames = Object.keys(data.accountThresholds);
     data.provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
 
-    // initialize the start time and number of alerts since last finding for each account to 0
-    data.startTime = 0;
-    data.numAlertsSinceLastFinding = {};
-    Object.values(data.accountAddresses).forEach((address) => {
-      data.numAlertsSinceLastFinding[address] = 0;
-    });
+    data.accounts = Object.keys(accountAddressesData).map((accountName) => ({
+      accountName,
+      accountAddress: accountAddressesData[accountName],
+      accountThreshold: config.accountBalance.accountThresholds[accountName],
+      startTime: 0,
+      numAlertsSinceLastFinding: 0,
+    }));
     /* eslint-enable no-param-reassign */
   };
 }
@@ -59,46 +57,43 @@ function provideHandleBlock(data) {
     // each account has not fallen below the specified threshold
     const findings = [];
     const {
-      accountThresholds, accountAddresses, accountNames, provider, everestId,
+      accounts, provider, everestId, alertMinimumIntervalSeconds,
     } = data;
-    if (!accountThresholds) {
+    if (!everestId) {
       throw new Error('handleBlock called before initialization');
     }
 
     // get the block timestamp
     const blockTimestamp = new BigNumber(blockEvent.block.timestamp);
-    let minTimeElapsed = false;
 
-    await Promise.all(accountNames.map(async (accountName) => {
-      const accountBalance = await provider.getBalance(accountAddresses[accountName]);
+    await Promise.all(accounts.map(async (account) => {
+      const {
+        accountName, accountAddress, accountThreshold,
+      } = account;
+      const accountBalance = await provider.getBalance(accountAddress);
 
       /* eslint-disable no-param-reassign */
       // If balance < threshold add an alert to the findings
-      if (accountBalance < (accountThresholds[accountName] * 1000000000000000000)) {
+      if (accountBalance < (accountThreshold * 1000000000000000000)) {
         // if less than the specified number of hours has elapsed, just increment the counter for
         // the number of alerts that would have been generated
-        if (blockTimestamp.minus(data.startTime) < data.alertMinimumIntervalSeconds) {
-          data.numAlertsSinceLastFinding[accountName] += 1;
+        if (blockTimestamp.minus(account.startTime) < alertMinimumIntervalSeconds) {
+          account.numAlertsSinceLastFinding += 1;
         } else {
-          minTimeElapsed = true;
-
           findings.push(createAlert(
             accountName,
             accountBalance,
-            accountThresholds[accountName],
+            accountThreshold,
             everestId,
-            data.numAlertsSinceLastFinding,
+            account.numAlertsSinceLastFinding,
           ));
 
-          // restart the alert counter
-          data.numAlertsSinceLastFinding[accountName] = 0;
+          // restart the alert counter and update the start time
+          account.numAlertsSinceLastFinding = 0;
+          account.startTime = new BigNumber(blockTimestamp.toString());
         }
       }
     }));
-
-    if (minTimeElapsed) {
-      data.startTime = new BigNumber(blockTimestamp.toString());
-    }
     /* eslint-enable no-param-reassign */
 
     return findings;

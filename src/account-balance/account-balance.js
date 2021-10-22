@@ -93,8 +93,8 @@ function provideHandleBlock(data) {
           account.startTime = new BigNumber(blockTimestamp.toString());
         }
       }
+      /* eslint-enable no-param-reassign */
     }));
-    /* eslint-enable no-param-reassign */
 
     return findings;
   };

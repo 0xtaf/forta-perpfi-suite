@@ -25,7 +25,7 @@ function provideInitialize(data) {
 }
 
 // helper function to create alerts
-function createAlert(accountName, accountBalance, thresholdEth, everestId) {
+function createAlert(accountName, accountAddress, accountBalance, thresholdEth, everestId) {
   const threshold = ethers.utils.parseEther(thresholdEth.toString());
   return Finding.fromObject({
     name: 'Perp.Fi Low Account Balance',
@@ -37,6 +37,7 @@ function createAlert(accountName, accountBalance, thresholdEth, everestId) {
     everestId,
     metadata: {
       accountName,
+      accountAddress,
       accountBalance: accountBalance.toString(),
       threshold: threshold.toString(),
     },
@@ -54,12 +55,14 @@ function provideHandleBlock(data) {
     }
 
     await Promise.all(accountNames.map(async (accountName) => {
-      const accountBalance = await provider.getBalance(accountAddresses[accountName]);
+      const accountAddress = accountAddresses[accountName];
+      const accountBalance = await provider.getBalance(accountAddress);
 
       // If balance < threshold add an alert to the findings
       if (accountBalance < (accountThresholds[accountName] * 1000000000000000000)) {
         findings.push(createAlert(
           accountName,
+          accountAddress,
           accountBalance,
           accountThresholds[accountName],
           everestId,

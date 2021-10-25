@@ -12,6 +12,7 @@ WORKDIR /app
 # if using build stage
 # COPY --from=builder /app/dist ./
 COPY ./src ./src
+COPY ./abi ./abi
 COPY agent-config.json ./
 COPY account-addresses.json ./
 COPY protocol-data.json ./

@@ -5,10 +5,13 @@
     "failedTxLimit": 10
   },
   "accountBalance": {
-    "Maker": 3,
-    "Arbitrageur": 3,
-    "CancelOrderKeeper": 3,
-    "Liquidator": 3
+    "accountThresholds": {
+      "Maker": 3,
+      "Arbitrageur": 3,
+      "CancelOrderKeeper": 3,
+      "Liquidator": 3
+    },
+    "alertMinimumIntervalSeconds": 86400
    },
   "adminEvents" : {
     "AccountBalance": {

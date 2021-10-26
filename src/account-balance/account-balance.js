@@ -73,7 +73,7 @@ function provideHandleBlock(data) {
         accountName, accountAddress, accountThreshold,
       } = account;
       const accountBalance = await provider.getBalance(accountAddress);
-      
+
       /* eslint-disable no-param-reassign */
       // If balance < threshold add an alert to the findings
       //

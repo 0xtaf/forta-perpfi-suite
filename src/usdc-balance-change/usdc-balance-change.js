@@ -98,10 +98,6 @@ function provideHandleBlock(data) {
               const { name } = addresses[address];
               findings.push(createAlert(address, name, balance, pctChange, blockWindow, everestId));
 
-              // clear the balance history to avoid generating multiple alerts for the same
-              // condition
-              addresses[address].balanceHistory = [];
-
               // don't bother checking any more balances - we don't need to publish a finding
               // for every threshold crossing that happened during this period
               break;

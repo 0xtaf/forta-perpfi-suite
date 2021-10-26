@@ -204,12 +204,8 @@ describe('USDC balance change', () => {
       // do some additional checks on the balance history
       const { balanceHistory } = data.addresses[TEST_ADDRESS];
 
-      // the current balance should match the last call to balanceOf()
-      expect(balanceHistory.slice(-1)[0]).toStrictEqual(new BigNumber(2100000));
-
-      // there should be 1 less balance recorded for each address at this point
-      // (the oldest was shifted out of the balance array for the next cycle)
-      expect(balanceHistory.length).toStrictEqual(data.blockWindow);
+      // the balance history should be empty after a finding is reported
+      expect(balanceHistory.length).toStrictEqual(0);
     });
   });
 });

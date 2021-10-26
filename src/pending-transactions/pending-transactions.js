@@ -72,14 +72,17 @@ function provideInitialize(data) {
 
     // register a function with the ethers provider to count pending transactions as they occur
     data.provider.on('pending', (tx) => {
-      // this function will execute whenever the JSON-RPC provider sends a pending transaction
-      if (data.blockTimestamp !== 0) {
-        const deltaTime = (process.hrtime.bigint() - data.startTime) / NANOSECONDS_PER_SECOND;
-        data.pendingTransactions.push({
-          timestamp: data.blockTimestamp + deltaTime,
-          hash: tx.hash,
-          from: tx.from,
-        });
+      // only keep transactions from the addresses of interest
+      if ((Object.keys(data.accountPendingTx)).indexOf(tx.from) !== -1) {
+        // this function will execute whenever the JSON-RPC provider sends a pending transaction
+        if (data.blockTimestamp !== 0) {
+          const deltaTime = (process.hrtime.bigint() - data.startTime) / NANOSECONDS_PER_SECOND;
+          data.pendingTransactions.push({
+            timestamp: data.blockTimestamp + deltaTime,
+            hash: tx.hash,
+            from: tx.from,
+          });
+        }
       }
     });
   };
@@ -105,30 +108,23 @@ function provideHandleBlock(data) {
     data.startTime = process.hrtime.bigint();
     /* eslint-enable no-param-reassign */
 
-    // iterate over the stored pending transactions
+    // process the transactions from the pendingTransactions array
     let numTransactionsProcessed = 0;
     data.pendingTransactions.forEach((transaction) => {
-      (Object.keys(data.accountPendingTx)).forEach((address) => {
-        // is this transaction from an address of interest?
-        if (transaction.from === address) {
-          // add the transaction timestamp to the appropriate array
-          data.accountPendingTx[address].transactions.push({
-            timestamp: transaction.timestamp,
-            hash: transaction.hash,
-          });
-        }
+      // add the transaction timestamp to the appropriate array
+      data.accountPendingTx[transaction.from].transactions.push({
+        timestamp: transaction.timestamp,
+        hash: transaction.hash,
       });
       numTransactionsProcessed++;
     });
 
-    // by this point, we have iterated over the array of pending transactions and stored the ones
-    // that are of interest.
-    // now we will remove the pending transactions that we iterated over
+    // remove the pending transactions that were processed
     for (let i = 0; i < numTransactionsProcessed; i++) {
       data.pendingTransactions.shift();
     }
 
-    // filter out any transactions that were processed in the current block
+    // filter out any transactions that are no longer pending (they appear in a mined block)
     (Object.keys(data.accountPendingTx)).forEach((address) => {
       const txs = data.accountPendingTx[address].transactions;
       // eslint-disable-next-line no-param-reassign
@@ -154,6 +150,11 @@ function provideHandleBlock(data) {
 
           if (numPending > data.config.txThreshold) {
             findings.push(createAlert(accountName, address, numPending));
+
+            // clear the pending transactions array to avoid firing multiple alerts for the same
+            // condition
+            // eslint-disable-next-line no-param-reassign
+            data.accountPendingTx[address].transactions = [];
           }
           break;
         }

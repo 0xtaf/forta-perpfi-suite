@@ -58,7 +58,7 @@ function provideHandleTransaction(data) {
       // add new occurrence
       failedTxs[name][txEvent.hash] = txEvent.blockNumber;
 
-      // filter out occurences older than blockWindow
+      // filter out occurrences older than blockWindow
       Object.entries(failedTxs[name]).forEach(([hash, blockNumber]) => {
         if (blockNumber < txEvent.blockNumber - blockWindow) {
           delete failedTxs[name][hash];
@@ -70,6 +70,9 @@ function provideHandleTransaction(data) {
         findings.push(
           createAlert(name, address, Object.keys(failedTxs[name]), blockWindow, everestId),
         );
+
+        // if we raised an alert, clear out the array of failed transactions to avoid over-alerting
+        failedTxs[name] = {};
       }
     });
     return findings;

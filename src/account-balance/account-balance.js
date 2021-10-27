@@ -32,7 +32,8 @@ function provideInitialize(data) {
 }
 
 // helper function to create alerts
-function createAlert(accountName, accountBalance, thresholdEth, everestId, numAlerts) {
+function createAlert(accountName, accountAddress, accountBalance,
+  thresholdEth, everestId, numAlerts) {
   const threshold = ethers.utils.parseEther(thresholdEth.toString());
   return Finding.fromObject({
     name: 'Perp.Fi Low Account Balance',
@@ -44,6 +45,7 @@ function createAlert(accountName, accountBalance, thresholdEth, everestId, numAl
     everestId,
     metadata: {
       accountName,
+      accountAddress,
       accountBalance: accountBalance.toString(),
       threshold: threshold.toString(),
       numAlertsSinceLastFinding: numAlerts.toString(),
@@ -82,6 +84,7 @@ function provideHandleBlock(data) {
         } else {
           findings.push(createAlert(
             accountName,
+            accountAddress,
             accountBalance,
             accountThreshold,
             everestId,

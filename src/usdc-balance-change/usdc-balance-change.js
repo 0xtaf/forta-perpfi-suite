@@ -12,21 +12,8 @@ const initializeData = {};
 // load account addresses
 const accountAddresses = require('../../account-addresses.json');
 
-// filter out accounts that were not in the 'accounts' list in the agent config file
-(Object.keys(accountAddresses)).forEach((name) => {
-  if (!config.usdcBalanceChange.accounts.includes(name)) {
-    delete accountAddresses[name];
-  }
-});
-
 // load contract addresses
 const { contracts } = require('../../protocol-data.json');
-
-// include only contracts that were in the 'contracts' list in the agent config file
-const contractAddresses = {};
-config.usdcBalanceChange.contracts.forEach((name) => {
-  contractAddresses[name] = contracts[name].address;
-});
 
 // provide ABI for USDC balanceOf()
 const { abi: usdcAbi } = require('../../abi/interface/IERC20Metadata.json');
@@ -131,6 +118,19 @@ function provideInitialize(data) {
   return async function initialize() {
     /* eslint-disable no-param-reassign */
     data.addresses = {};
+
+    // filter out accounts that were not in the 'accounts' list in the agent config file
+    (Object.keys(accountAddresses)).forEach((name) => {
+      if (!config.usdcBalanceChange.accounts.includes(name)) {
+        delete accountAddresses[name];
+      }
+    });
+
+    // include only contracts that were in the 'contracts' list in the agent config file
+    const contractAddresses = {};
+    config.usdcBalanceChange.contracts.forEach((name) => {
+      contractAddresses[name] = contracts[name].address;
+    });
 
     // combine the account and contract addresses into a single list to monitor
     const allAddresses = { ...accountAddresses, ...contractAddresses };

@@ -15,6 +15,7 @@ describe('failed transactions', () => {
   let handleTransaction;
   let txObject;
   let hash;
+  const mockGetTransactionReceipt = jest.fn()
 
   beforeEach(async () => {
     // reset hash
@@ -22,7 +23,7 @@ describe('failed transactions', () => {
 
     // set up handler
     await (provideInitialize(data))();
-    const handler = provideHandleTransaction(data);
+    const handler = provideHandleTransaction(data, mockGetTransactionReceipt);
     handleTransaction = async (txEvent) => {
       // wrapper to increment hash along the way
       txObject.hash = toHash(hash++);
@@ -35,12 +36,10 @@ describe('failed transactions', () => {
     data.blockWindow = 5;
     data.failedTxLimit = 10;
 
-    // default txObject, hash automatically incremented
+    // default status, txObject, hash automatically incremented
+    mockGetTransactionReceipt.mockReturnValue({ status: false })
+
     txObject = {
-      receipt: {
-        // failed tx
-        status: false,
-      },
       from: addressA,
       blockNumber: 10,
     };
@@ -59,7 +58,7 @@ describe('failed transactions', () => {
   describe('does not report', () => {
     it('when there are no failed txs', async () => {
       // add 15 non failed transactions in the same block
-      txObject.receipt.status = true;
+      mockGetTransactionReceipt.mockReturnValue({ status: true })
       await iterateHandlerExpectEmpty(15);
     });
 

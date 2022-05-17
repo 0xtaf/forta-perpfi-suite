@@ -1,5 +1,5 @@
 const {
-  Finding, FindingSeverity, FindingType,
+  Finding, FindingSeverity, FindingType, getTransactionReceipt
 } = require('forta-agent');
 
 // addresses we are interested in monitoring
@@ -28,7 +28,7 @@ function createAlert(name, address, failedTxs, blockWindow, everestId) {
   });
 }
 
-function provideHandleTransaction(data) {
+function provideHandleTransaction(data, getTransactionReceipt) {
   /**
    * data is expected to have:
    *  - addresses (object of name:address entries we are interested in)
@@ -46,7 +46,9 @@ function provideHandleTransaction(data) {
     const findings = [];
 
     // we are only interested in failed transactions
-    if (txEvent.receipt.status) {
+    const { status } = await getTransactionReceipt(txEvent.hash)
+
+    if (status) {
       return findings;
     }
 
@@ -103,6 +105,6 @@ module.exports = {
   provideInitialize,
   initialize: provideInitialize(initializeData),
   provideHandleTransaction,
-  handleTransaction: provideHandleTransaction(initializeData),
+  handleTransaction: provideHandleTransaction(initializeData, getTransactionReceipt),
   createAlert,
 };

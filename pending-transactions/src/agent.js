@@ -22,7 +22,6 @@ function createAlert(accountName, accountAddress, numPending) {
     protocol: 'Perp.Fi',
     severity: FindingSeverity.Critical,
     type: FindingType.Degraded,
-    everestId: config.PERPFI_EVEREST_ID,
     metadata: {
       accountName,
       accountAddress,

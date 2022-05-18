@@ -172,7 +172,6 @@ describe('Perpetual Finance pending transaction agent', () => {
         protocol: 'Perp.Fi',
         severity: FindingSeverity.Critical,
         type: FindingType.Degraded,
-        everestId: '0xb0b67f51aee86a23574868bf08622c4bddb4ce12',
         metadata: {
           accountName: 'Maker',
           accountAddress: '0x2E8f9B6294aAdef4CE2Fc5acf78cbc04396240EA',

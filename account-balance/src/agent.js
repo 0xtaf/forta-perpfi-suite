@@ -16,7 +16,6 @@ function provideInitialize(data) {
     /* eslint-disable no-param-reassign */
     // assign configurable fields
     data.alertMinimumIntervalSeconds = config.accountBalance.alertMinimumIntervalSeconds;
-    data.everestId = config.PERPFI_EVEREST_ID;
 
     data.provider = new ethers.providers.JsonRpcProvider(getJsonRpcUrl());
 
@@ -33,7 +32,7 @@ function provideInitialize(data) {
 
 // helper function to create alerts
 function createAlert(accountName, accountAddress, accountBalance,
-  thresholdEth, everestId, numAlerts) {
+  thresholdEth, numAlerts) {
   const threshold = ethers.utils.parseEther(thresholdEth.toString());
   return Finding.fromObject({
     name: 'Perp.Fi Low Account Balance',
@@ -42,7 +41,6 @@ function createAlert(accountName, accountAddress, accountBalance,
     severity: FindingSeverity.Critical,
     type: FindingType.Degraded,
     protocol: 'Perp.Fi',
-    everestId,
     metadata: {
       accountName,
       accountAddress,
@@ -59,11 +57,8 @@ function provideHandleBlock(data) {
     // each account has not fallen below the specified threshold
     const findings = [];
     const {
-      accounts, provider, everestId, alertMinimumIntervalSeconds,
+      accounts, provider, alertMinimumIntervalSeconds,
     } = data;
-    if (!everestId) {
-      throw new Error('handleBlock called before initialization');
-    }
 
     // get the block timestamp
     const blockTimestamp = new BigNumber(blockEvent.block.timestamp);
@@ -87,7 +82,6 @@ function provideHandleBlock(data) {
             accountAddress,
             accountBalance,
             accountThreshold,
-            everestId,
             account.numAlertsSinceLastFinding,
           ));
 

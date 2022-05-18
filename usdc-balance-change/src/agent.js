@@ -25,7 +25,7 @@ function calcPercentChange(first, second) {
 }
 
 // helper function to create alerts
-function createAlert(address, name, balance, pctChange, blockWindow, everestId) {
+function createAlert(address, name, balance, pctChange, blockWindow) {
   return Finding.fromObject({
     name: 'Perp.Fi USDC Balance Change',
     description: `The USDC balance of the ${name} account changed by ${pctChange}% `
@@ -34,7 +34,6 @@ function createAlert(address, name, balance, pctChange, blockWindow, everestId) 
     protocol: 'Perp.Fi',
     severity: FindingSeverity.Critical,
     type: FindingType.Suspicious,
-    everestId,
     metadata: {
       address,
       balance: balance.toString(),
@@ -46,7 +45,7 @@ function createAlert(address, name, balance, pctChange, blockWindow, everestId) 
 function provideHandleBlock(data) {
   return async function handleBlock() {
     const {
-      blockWindow, everestId, addresses, changeThresholdPercent, usdcContract,
+      blockWindow, addresses, changeThresholdPercent, usdcContract,
     } = data;
     if (!addresses) {
       throw new Error('Called handler before initializing');
@@ -96,7 +95,7 @@ function provideHandleBlock(data) {
             // emit a finding if the USDC funds decreased by more than the threshold
             if (pctChange < (-1 * changeThresholdPercent)) {
               const { name } = addresses[address];
-              findings.push(createAlert(address, name, balance, pctChange, blockWindow, everestId));
+              findings.push(createAlert(address, name, balance, pctChange, blockWindow));
 
               // don't bother checking any more balances - we don't need to publish a finding
               // for every threshold crossing that happened during this period
@@ -157,7 +156,6 @@ function provideInitialize(data) {
     data.usdcContract = new ethers.Contract(data.USDC_ADDRESS, usdcAbi, data.provider);
 
     // assign configurable fields
-    data.everestId = config.PERPFI_EVEREST_ID;
     data.blockWindow = config.usdcBalanceChange.blockWindow;
     // since balance increase detection is not supported, for changeThresholdPercent handle the
     // possibility of positive and negative values

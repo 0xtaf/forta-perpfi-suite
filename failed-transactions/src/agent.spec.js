@@ -88,7 +88,7 @@ describe('failed transactions', () => {
 
       // generate expected failure
       const failedTxs = [...Array(10).keys()].map((num) => toHash(num));
-      const expectedFinding = [createAlert('A', addressA, failedTxs, data.blockWindow, data.everestId)];
+      const expectedFinding = [createAlert('A', addressA, failedTxs, data.blockWindow)];
 
       // check for expected failure
       expect(finding).toStrictEqual(expectedFinding);
@@ -107,7 +107,7 @@ describe('failed transactions', () => {
 
       // generate expected failure
       const failedTxs = [...Array(10).keys()].map((num) => toHash(num + 9));
-      const expectedFinding = [createAlert('A', addressA, failedTxs, data.blockWindow, data.everestId)];
+      const expectedFinding = [createAlert('A', addressA, failedTxs, data.blockWindow)];
 
       // check for expected failure
       expect(finding).toStrictEqual(expectedFinding);

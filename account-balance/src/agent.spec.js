@@ -11,7 +11,6 @@ describe('account balance monitoring', () => {
   describe('handleBlock', () => {
     let initializeData;
     let handleBlock;
-    let everestId;
 
     const mockThresholds = {
       Maker: 3,
@@ -33,7 +32,6 @@ describe('account balance monitoring', () => {
       // Initialize the Handler
       await (provideInitialize(initializeData))();
 
-      ({ everestId } = initializeData);
       // update each account's address and threshold to use the mocked address and mocked threshold
       initializeData.accounts.forEach((account) => {
         /* eslint-disable no-param-reassign */
@@ -88,10 +86,10 @@ describe('account balance monitoring', () => {
 
       // Assertions
       const alerts = [
-        createAlert('Maker', '0xMAKERADDRESS', 4, mockThresholds.Maker, everestId, 0),
-        createAlert('Arbitrageur', '0xARBITRAGEURADDRESS', 4, mockThresholds.Arbitrageur, everestId, 0),
-        createAlert('CancelOrderKeeper', '0xCANCELORDERKEEPERADDRESS', 4, mockThresholds.CancelOrderKeeper, everestId, 0),
-        createAlert('Liquidator', '0xLIQUIDATORADDRESS', 4, mockThresholds.Liquidator, everestId, 0),
+        createAlert('Maker', '0xMAKERADDRESS', 4, mockThresholds.Maker, 0),
+        createAlert('Arbitrageur', '0xARBITRAGEURADDRESS', 4, mockThresholds.Arbitrageur, 0),
+        createAlert('CancelOrderKeeper', '0xCANCELORDERKEEPERADDRESS', 4, mockThresholds.CancelOrderKeeper, 0),
+        createAlert('Liquidator', '0xLIQUIDATORADDRESS', 4, mockThresholds.Liquidator, 0),
       ];
 
       expect(findings).toStrictEqual(alerts);
@@ -124,7 +122,7 @@ describe('account balance monitoring', () => {
 
       // Assertions
       const alerts = [
-        createAlert('Maker', '0xMAKERADDRESS', 2900000000000000000, mockThresholds.Maker, everestId, 0),
+        createAlert('Maker', '0xMAKERADDRESS', 2900000000000000000, mockThresholds.Maker, 0),
       ];
 
       expect(findings).toStrictEqual(alerts);
@@ -198,10 +196,10 @@ describe('account balance monitoring', () => {
 
       // assertions
       const alerts = [
-        createAlert('Maker', '0xMAKERADDRESS', 4, mockThresholds.Maker, everestId, 0),
-        createAlert('Arbitrageur', '0xARBITRAGEURADDRESS', 4, mockThresholds.Arbitrageur, everestId, 0),
-        createAlert('CancelOrderKeeper', '0xCANCELORDERKEEPERADDRESS', 4, mockThresholds.CancelOrderKeeper, everestId, 0),
-        createAlert('Liquidator', '0xLIQUIDATORADDRESS', 4, mockThresholds.Liquidator, everestId, 0),
+        createAlert('Maker', '0xMAKERADDRESS', 4, mockThresholds.Maker, 0),
+        createAlert('Arbitrageur', '0xARBITRAGEURADDRESS', 4, mockThresholds.Arbitrageur, 0),
+        createAlert('CancelOrderKeeper', '0xCANCELORDERKEEPERADDRESS', 4, mockThresholds.CancelOrderKeeper, 0),
+        createAlert('Liquidator', '0xLIQUIDATORADDRESS', 4, mockThresholds.Liquidator, 0),
       ];
 
       expect(findings).toStrictEqual(alerts);
@@ -270,10 +268,10 @@ describe('account balance monitoring', () => {
 
       // assertions
       const alerts = [
-        createAlert('Maker', '0xMAKERADDRESS', 4, mockThresholds.Maker, everestId, 2),
-        createAlert('Arbitrageur', '0xARBITRAGEURADDRESS', 4, mockThresholds.Arbitrageur, everestId, 2),
-        createAlert('CancelOrderKeeper', '0xCANCELORDERKEEPERADDRESS', 4, mockThresholds.CancelOrderKeeper, everestId, 2),
-        createAlert('Liquidator', '0xLIQUIDATORADDRESS', 4, mockThresholds.Liquidator, everestId, 2),
+        createAlert('Maker', '0xMAKERADDRESS', 4, mockThresholds.Maker, 2),
+        createAlert('Arbitrageur', '0xARBITRAGEURADDRESS', 4, mockThresholds.Arbitrageur, 2),
+        createAlert('CancelOrderKeeper', '0xCANCELORDERKEEPERADDRESS', 4, mockThresholds.CancelOrderKeeper, 2),
+        createAlert('Liquidator', '0xLIQUIDATORADDRESS', 4, mockThresholds.Liquidator, 2),
       ];
 
       expect(findings).toStrictEqual(alerts);
@@ -306,10 +304,10 @@ describe('account balance monitoring', () => {
 
       // assertions
       const alerts = [
-        createAlert('Maker', '0xMAKERADDRESS', 4, mockThresholds.Maker, everestId, 2),
-        createAlert('Arbitrageur', '0xARBITRAGEURADDRESS', 4, mockThresholds.Arbitrageur, everestId, 2),
-        createAlert('CancelOrderKeeper', '0xCANCELORDERKEEPERADDRESS', 4, mockThresholds.CancelOrderKeeper, everestId, 2),
-        createAlert('Liquidator', '0xLIQUIDATORADDRESS', 4, mockThresholds.Liquidator, everestId, 2),
+        createAlert('Maker', '0xMAKERADDRESS', 4, mockThresholds.Maker, 2),
+        createAlert('Arbitrageur', '0xARBITRAGEURADDRESS', 4, mockThresholds.Arbitrageur, 2),
+        createAlert('CancelOrderKeeper', '0xCANCELORDERKEEPERADDRESS', 4, mockThresholds.CancelOrderKeeper, 2),
+        createAlert('Liquidator', '0xLIQUIDATORADDRESS', 4, mockThresholds.Liquidator, 2),
       ];
 
       expect(findings).toStrictEqual(alerts);

@@ -119,7 +119,6 @@ describe('admin event monitoring', () => {
         alertId: 'AE-PERPFI-ADMIN-EVENT',
         severity: FindingSeverity.High,
         type: FindingType.Suspicious,
-        everestId: '0xb0b67f51aee86a23574868bf08622c4bddb4ce12',
         protocol: 'Perp.Fi',
         metadata: {
           contractName: 'InsuranceFund',

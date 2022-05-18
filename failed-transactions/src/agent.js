@@ -10,7 +10,7 @@ const config = require('./agent-config.json');
 const initializeData = {};
 
 // formats provided data into a Forta alert
-function createAlert(name, address, failedTxs, blockWindow, everestId) {
+function createAlert(name, address, failedTxs, blockWindow) {
   return Finding.fromObject({
     name: 'Perp.Fi Failed Transactions Alert',
     description: `${name} has sent ${failedTxs.length} failed transactions `
@@ -19,7 +19,6 @@ function createAlert(name, address, failedTxs, blockWindow, everestId) {
     alertId: 'AE-PERPFI-FAILED-TRANSACTIONS',
     severity: FindingSeverity.Critical,
     type: FindingType.Info,
-    everestId,
     metadata: {
       name,
       address,
@@ -35,11 +34,10 @@ function provideHandleTransaction(data, getTransactionReceipt) {
    *  - failedTxs (object to hold failed txs)
    *  - blockWindow (config of how many blocks we should look for failed txs)
    *  - failedTxLimit (how many failed txs required to raise an alert)
-   *  - everestId (project ID from https://everest.link)
    */
   return async function handleTransaction(txEvent) {
     const {
-      blockWindow, everestId, addresses, failedTxs, failedTxLimit,
+      blockWindow, addresses, failedTxs, failedTxLimit,
     } = data;
     if (!addresses) throw new Error('called handler before initializing');
 
@@ -70,7 +68,7 @@ function provideHandleTransaction(data, getTransactionReceipt) {
       // create finding if there are too many failed txs
       if (Object.keys(failedTxs[name]).length >= failedTxLimit) {
         findings.push(
-          createAlert(name, address, Object.keys(failedTxs[name]), blockWindow, everestId),
+          createAlert(name, address, Object.keys(failedTxs[name]), blockWindow),
         );
 
         // if we raised an alert, clear out the array of failed transactions to avoid over-alerting
@@ -96,7 +94,6 @@ function provideInitialize(data) {
     // assign configurable fields
     data.blockWindow = config.failedTransactions.blockWindow;
     data.failedTxLimit = config.failedTransactions.failedTxLimit;
-    data.everestId = config.PERPFI_EVEREST_ID;
     /* eslint-enable no-param-reassign */
   };
 }

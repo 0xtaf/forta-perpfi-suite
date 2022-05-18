@@ -26,7 +26,6 @@ function createAlert(contractName, address, priceSpreadRatio, upper, lower, thre
     protocol: 'Perp.Fi',
     severity: FindingSeverity.Critical,
     type: FindingType.Degraded,
-    everestId: config.PERPFI_EVEREST_ID,
     metadata: {
       contractName,
       address,

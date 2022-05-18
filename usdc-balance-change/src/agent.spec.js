@@ -192,7 +192,6 @@ describe('USDC balance change', () => {
           protocol: 'Perp.Fi',
           severity: FindingSeverity.Critical,
           type: FindingType.Suspicious,
-          everestId: '0xb0b67f51aee86a23574868bf08622c4bddb4ce12',
           metadata: {
             address: TEST_ADDRESS,
             balance: '2100000',

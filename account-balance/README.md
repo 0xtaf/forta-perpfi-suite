@@ -1,10 +1,10 @@
 # Forta Perp.Fi Suite
 
-Forta agent suite to monitor Perpetual Finance.
+Forta bot suite to monitor Perpetual Finance.
 
 ## Description
 
-This agent monitors account balances of Perpetual Finance (Perp.Fi).
+This bot monitors account balances of Perpetual Finance (Perp.Fi).
 
 ## Supported Chains
 
@@ -21,4 +21,4 @@ This agent monitors account balances of Perpetual Finance (Perp.Fi).
 
 ## Test Data
 
-To run all of the tests for this agent, use the following command: `npm run test`
+To run all of the tests for this bot, use the following command: `npm run test`

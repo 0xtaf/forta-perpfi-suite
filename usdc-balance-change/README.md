@@ -1,10 +1,10 @@
 # Forta Perp.Fi Suite
 
-Forta agent suite to monitor Perpetual Finance.
+Forta bot suite to monitor Perpetual Finance.
 
 ## Description
 
-This agent monitors USDC balance change of contracts at Perpetual Finance (Perp.Fi).
+This bot monitors USDC balance change of contracts at Perpetual Finance (Perp.Fi).
 ## Supported Chains
 
 - Ethereum Rinkeby
@@ -21,4 +21,4 @@ This agent monitors USDC balance change of contracts at Perpetual Finance (Perp.
 
 ## Test Data
 
-To run all of the tests for this agent, use the following command: `npm run test`
+To run all of the tests for this bot, use the following command: `npm run test`

@@ -59,6 +59,9 @@ function provideHandleBlock(data) {
     const {
       accounts, provider, alertMinimumIntervalSeconds,
     } = data;
+    if (!accounts) {
+      throw new Error('handleBlock called before initialization');
+    }
 
     // get the block timestamp
     const blockTimestamp = new BigNumber(blockEvent.block.timestamp);

@@ -8,11 +8,12 @@ This bot monitors price spread ratio between the Perpetual Finance (Perp.Fi) pri
 
 ## Supported Chains
 
-- Ethereum Rinkeby
+- Optimism
 
 ## Alerts
 
 <!-- -->
+
 - AE-PERPFI-PRICE-SPREAD-RATIO
   - Fired when the price spread ratio between the Perpetual Finance price and the FTX price exceed a threshold for a period of time
   - Severity is always set to "critical"

@@ -8,11 +8,12 @@ This bot monitors admin events of Perpetual Finance (Perp.Fi).
 
 ## Supported Chains
 
-- Ethereum Rinkeby
+- Optimism
 
 ## Alerts
 
 <!-- -->
+
 - AE-PERPFI-ADMIN-EVENT
   - Fired on any event in admin-events.json
   - Severity is set to the value in admin-events.json

@@ -8,11 +8,12 @@ This bot monitors account balances of Perpetual Finance (Perp.Fi).
 
 ## Supported Chains
 
-- Ethereum Rinkeby
+- Optimism
 
 ## Alerts
 
 <!-- -->
+
 - AE-PERPFI-LOW-ACCOUNT-BALANCE
   - Fired when an account in account-addresses.json has a balance lower than the threshold set in agent-config.json
   - Severity is always set to "critical"

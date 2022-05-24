@@ -5,13 +5,15 @@ Forta bot suite to monitor Perpetual Finance.
 ## Description
 
 This bot monitors USDC balance change of contracts at Perpetual Finance (Perp.Fi).
+
 ## Supported Chains
 
-- Ethereum Rinkeby
+- Optimism
 
 ## Alerts
 
 <!-- -->
+
 - AE-PERPFI-USDC-BALANCE-CHANGE
   - Fired when the USDC balance of a contract or account changes by 10% or more within
     approximately 1 minute

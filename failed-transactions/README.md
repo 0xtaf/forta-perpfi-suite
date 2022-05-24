@@ -8,11 +8,12 @@ This bot monitors failed transactions of Perpetual Finance (Perp.Fi).
 
 ## Supported Chains
 
-- Ethereum Rinkeby
+- Optimism
 
 ## Alerts
 
 <!-- -->
+
 - AE-PERPFI-FAILED-TRANSACTIONS
   - Fired when there are more failed transactions than the specified limit within a specified time window
   - Severity is always set to "critical"

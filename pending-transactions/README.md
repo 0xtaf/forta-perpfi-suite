@@ -8,11 +8,12 @@ This bot monitors pending transactions of Perpetual Finance (Perp.Fi).
 
 ## Supported Chains
 
-- Ethereum Rinkeby
+- Optimism
 
 ## Alerts
 
 <!-- -->
+
 - AE-PERPFI-HIGH-PENDING-TX
   - Fired when the number of pending transactions for specific Perpetual Finance addresses exceeds a threshold
   - Severity is always set to "critical"

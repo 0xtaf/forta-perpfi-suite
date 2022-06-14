@@ -9,7 +9,12 @@ const {
 const protocolData = require('./protocol-data.json');
 
 // create an array with the base tokens for Perpetual Finance
-const baseTokens = ['vUSD', 'vBTC', 'vETH'];
+const baseTokens = [
+  'vUSD', 'vBTC', 'vETH','vAAVE','vAPE',
+  'vATOM','vAVAX','vBNB','vCRV','vFLOW',
+  'vFTM','vLINK','vLUNA','vMATIC','vNEAR',
+  'vONE','vPERP','vSAND','vSOL'
+];
 
 function getContractAddressesAbis(contractNames) {
   const contractAddressesAbis = [];

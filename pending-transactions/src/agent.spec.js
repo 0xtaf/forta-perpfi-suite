@@ -89,7 +89,7 @@ describe('Perpetual Finance pending transaction agent', () => {
 
       expect(findings).toStrictEqual([]);
 
-      const mockAddress = accountAddresses.Maker;
+      const mockAddress = accountAddresses.PriceKeeper;
       const mockNumPendingTx = data.config.TX_THRESHOLD + 1;
 
       // now that the first blockEvent has been handled (with non-zero timestamp), the pending
@@ -136,9 +136,9 @@ describe('Perpetual Finance pending transaction agent', () => {
 
       expect(findings).toStrictEqual([]);
 
-      const mockAddress = accountAddresses.Maker;
+      const mockAddress = accountAddresses.PriceKeeper;
       const mockNumPendingTx = data.config.TX_THRESHOLD + 1;
-      const mockAccountName = 'Maker';
+      const mockAccountName = 'PriceKeeper';
 
       // now that the first blockEvent has been handled (with non-zero timestamp), the pending
       // transactions will added to the pendingTransactions array
@@ -173,8 +173,8 @@ describe('Perpetual Finance pending transaction agent', () => {
         severity: FindingSeverity.Critical,
         type: FindingType.Degraded,
         metadata: {
-          accountName: 'Maker',
-          accountAddress: '0x2E8f9B6294aAdef4CE2Fc5acf78cbc04396240EA',
+          accountName: 'PriceKeeper',
+          accountAddress: '0x675e328b73e15CD41acD2828B83B417687C36BBA',
           numPending: mockNumPendingTx,
         },
       });

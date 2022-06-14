@@ -1,10 +1,15 @@
 {
   "accountBalance": {
     "accountThresholds": {
-      "Maker": 3,
-      "Arbitrageur": 3,
-      "CancelOrderKeeper": 3,
-      "Liquidator": 3
+      "PriceKeeper": 3,
+      "PriceKeeper2": 3,
+      "PriceKeeper3": 3,
+      "PriceKeeper4": 3,
+      "PriceKeeper5": 3,
+      "PriceKeeper6": 3,
+      "Liquidator": 3,
+      "Liquidator2": 3,
+      "CollateralLiquidator": 3
     },
     "alertMinimumIntervalSeconds": 86400
   }

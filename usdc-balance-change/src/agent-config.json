@@ -3,7 +3,17 @@
     "USDC_ADDRESS": "0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
     "blockWindow": 4,
     "changeThresholdPercent": -10,
-    "accounts": ["Arbitrageur", "CancelOrderKeeper", "Liquidator", "Maker"],
+    "accounts": [
+      "PriceKeeper",
+      "PriceKeeper2",
+      "PriceKeeper3",
+      "PriceKeeper4",
+      "PriceKeeper5",
+      "PriceKeeper6",
+      "Liquidator",
+      "Liquidator2",
+      "CollateralLiquidator"
+    ],
     "contracts": ["InsuranceFund", "Vault"]
   }
 }

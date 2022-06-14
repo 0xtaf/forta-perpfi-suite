@@ -11,6 +11,84 @@
       "upperLimitPercent": 3,
       "lowerLimitPercent": -3,
       "ftxUrl": "https://ftx.com/api/markets/ETH/USD"
+    },
+    "vAAVE": {
+      "timeThresholdSeconds": 300,
+          "upperLimitPercent": 3,
+          "lowerLimitPercent": -3,
+          "ftxUrl": "https://ftx.com/api/markets/AAVE/USD"
+    },
+    "vAPE": {
+      "timeThresholdSeconds": 300,
+          "upperLimitPercent": 3,
+          "lowerLimitPercent": -3,
+          "ftxUrl": "https://ftx.com/api/markets/APE/USD"
+    },
+    "vATOM": {
+      "timeThresholdSeconds": 300,
+          "upperLimitPercent": 3,
+          "lowerLimitPercent": -3,
+          "ftxUrl": "https://ftx.com/api/markets/ATOM/USD"
+    },
+    "vAVAX": {
+      "timeThresholdSeconds": 300,
+          "upperLimitPercent": 3,
+          "lowerLimitPercent": -3,
+          "ftxUrl": "https://ftx.com/api/markets/AVAX/USD"
+    },
+    "vBNB": {
+      "timeThresholdSeconds": 300,
+          "upperLimitPercent": 3,
+          "lowerLimitPercent": -3,
+          "ftxUrl": "https://ftx.com/api/markets/BNB/USD"
+    },
+    "vCRV": {
+      "timeThresholdSeconds": 300,
+          "upperLimitPercent": 3,
+          "lowerLimitPercent": -3,
+          "ftxUrl": "https://ftx.com/api/markets/CRV/USD"
+    },
+    "vFTM": {
+      "timeThresholdSeconds": 300,
+          "upperLimitPercent": 3,
+          "lowerLimitPercent": -3,
+          "ftxUrl": "https://ftx.com/api/markets/FTM/USD"
+    },
+    "vLINK": {
+      "timeThresholdSeconds": 300,
+          "upperLimitPercent": 3,
+          "lowerLimitPercent": -3,
+          "ftxUrl": "https://ftx.com/api/markets/LINK/USD"
+    },
+    "vMATIC": {
+      "timeThresholdSeconds": 300,
+          "upperLimitPercent": 3,
+          "lowerLimitPercent": -3,
+          "ftxUrl": "https://ftx.com/api/markets/MATIC/USD"
+    },
+    "vNEAR": {
+      "timeThresholdSeconds": 300,
+          "upperLimitPercent": 3,
+          "lowerLimitPercent": -3,
+          "ftxUrl": "https://ftx.com/api/markets/NEAR/USD"
+    },
+    "vPERP": {
+      "timeThresholdSeconds": 300,
+          "upperLimitPercent": 3,
+          "lowerLimitPercent": -3,
+          "ftxUrl": "https://ftx.com/api/markets/PERP/USD"
+    },
+    "vSAND": {
+      "timeThresholdSeconds": 300,
+          "upperLimitPercent": 3,
+          "lowerLimitPercent": -3,
+          "ftxUrl": "https://ftx.com/api/markets/SAND/USD"
+    },
+    "vSOL": {
+      "timeThresholdSeconds": 300,
+          "upperLimitPercent": 3,
+          "lowerLimitPercent": -3,
+          "ftxUrl": "https://ftx.com/api/markets/SOL/USD"
     }
   }
 }

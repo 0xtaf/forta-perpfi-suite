@@ -57,22 +57,6 @@ function createAlert(
   });
 }
 
-// helper function to filter logs based on contract addresses and event names
-function filterAndParseLogs(logs, address, iface, eventNames) {
-  // collect logs only from the contracts of interest
-  const contractLogs = logs.filter((log) => log.address === address);
-  if (contractLogs.length === 0) {
-    return [];
-  }
-
-  // decode logs and filter on the ones we are interested in
-  const parse = (log) => iface.parseLog(log);
-  const filter = (log) => eventNames.indexOf(log.name) !== -1;
-  const parsedLogs = contractLogs.map(parse).filter(filter);
-
-  return parsedLogs;
-}
-
 function provideInitialize(data) {
   return async function initialize() {
     /* eslint-disable no-param-reassign */
@@ -102,12 +86,8 @@ function provideHandleTransaction(data) {
       const eventNames = Object.keys(events);
 
       // filter down to only the events we want to alert on
-      const parsedLogs = filterAndParseLogs(
-        txEvent.logs,
-        contract.address,
-        contract.iface,
-        eventNames,
-      );
+      const filter = (log) => eventNames.indexOf(log.name) !== -1;
+      const parsedLogs = txEvent.filterLog(contract.contractAbi, contract.address).filter(filter)
 
       // alert on each item in parsedLogs
       parsedLogs.forEach((parsedLog) => {

@@ -28,8 +28,11 @@
       "ClearingHouseChanged" : {"type": "Suspicious", "severity": "High"},
       "OwnershipTransferred" : {"type": "Suspicious", "severity": "High"}
     },
-    "UniswapV3Factory": {
+    "CollateralManager": {
       "OwnershipTransferred" : {"type": "Suspicious", "severity": "High"}
+    },
+    "UniswapV3Factory": {
+      "OwnerChanged" : {"type": "Suspicious", "severity": "High"}
     },
     "Vault": {
       "OwnershipTransferred" : {"type": "Suspicious", "severity": "High"}
@@ -41,6 +44,54 @@
       "OwnershipTransferred" : {"type": "Suspicious", "severity": "High"}
     },
     "vUSD": {
+      "OwnershipTransferred" : {"type": "Suspicious", "severity": "High"}
+    },
+    "vAAVE": {
+      "OwnershipTransferred" : {"type": "Suspicious", "severity": "High"}
+    },
+    "vAPE": {
+      "OwnershipTransferred" : {"type": "Suspicious", "severity": "High"}
+    },
+    "vATOM": {
+      "OwnershipTransferred" : {"type": "Suspicious", "severity": "High"}
+    },
+    "vAVAX": {
+      "OwnershipTransferred" : {"type": "Suspicious", "severity": "High"}
+    },
+    "vBNB": {
+      "OwnershipTransferred" : {"type": "Suspicious", "severity": "High"}
+    },
+    "vCRV": {
+      "OwnershipTransferred" : {"type": "Suspicious", "severity": "High"}
+    },
+    "vFLOW": {
+      "OwnershipTransferred" : {"type": "Suspicious", "severity": "High"}
+    },
+    "vFTM": {
+      "OwnershipTransferred" : {"type": "Suspicious", "severity": "High"}
+    },
+    "vLINK": {
+      "OwnershipTransferred" : {"type": "Suspicious", "severity": "High"}
+    },
+    "vLUNA": {
+      "OwnershipTransferred" : {"type": "Suspicious", "severity": "High"}
+    },
+    "vMATIC": {
+      "OwnershipTransferred" : {"type": "Suspicious", "severity": "High"}
+    },
+    "vNEAR": {
+      "OwnershipTransferred" : {"type": "Suspicious", "severity": "High"}
+    },
+    "vONE": {
+      "OwnershipTransferred" : {"type": "Suspicious", "severity": "High"}
+    },
+    "vPERP": {
+      "OwnershipTransferred" : {"type": "Suspicious", "severity": "High"}
+    },
+    "vSAND": {
+      "OwnershipTransferred" : {"type": "Suspicious", "severity": "High"}
+    },
+    "vSOL": {
       "OwnershipTransferred" : {"type": "Suspicious", "severity": "High"}
     }
   }

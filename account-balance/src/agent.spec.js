@@ -13,17 +13,27 @@ describe('account balance monitoring', () => {
     let handleBlock;
 
     const mockThresholds = {
-      Maker: 3,
-      Arbitrageur: 3,
-      CancelOrderKeeper: 3,
+      PriceKeeper: 3,
+      PriceKeeper2: 3,
+      PriceKeeper3: 3,
+      PriceKeeper4: 3,
+      PriceKeeper5: 3,
+      PriceKeeper6: 3,
       Liquidator: 3,
+      Liquidator2: 3,
+      CollateralLiquidator: 3,
     };
 
     const mockAddresses = {
-      Maker: '0xMAKERADDRESS',
-      Arbitrageur: '0xARBITRAGEURADDRESS',
-      CancelOrderKeeper: '0xCANCELORDERKEEPERADDRESS',
+      PriceKeeper: '0xPRICEKEEPERADDRESS',
+      PriceKeeper2: '0xPRICEKEEPER2ADDRESS',
+      PriceKeeper3: '0xPRICEKEEPER3ADDRESS',
+      PriceKeeper4: '0xPRICEKEEPER4ADDRESS',
+      PriceKeeper5: '0xPRICEKEEPER5ADDRESS',
+      PriceKeeper6: '0xPRICEKEEPER6ADDRESS',
       Liquidator: '0xLIQUIDATORADDRESS',
+      Liquidator2: '0xLIQUIDATOR2ADDRESS',
+      CollateralLiquidator: '0xCOLLATERALLIQUIDATORADDRESS',
     };
 
     beforeEach(async () => {
@@ -86,21 +96,74 @@ describe('account balance monitoring', () => {
 
       // Assertions
       const alerts = [
-        createAlert('Maker', '0xMAKERADDRESS', 4, mockThresholds.Maker, 0),
-        createAlert('Arbitrageur', '0xARBITRAGEURADDRESS', 4, mockThresholds.Arbitrageur, 0),
-        createAlert('CancelOrderKeeper', '0xCANCELORDERKEEPERADDRESS', 4, mockThresholds.CancelOrderKeeper, 0),
+        createAlert(
+          'PriceKeeper',
+          '0xPRICEKEEPERADDRESS',
+          4,
+          mockThresholds.PriceKeeper,
+          0
+        ),
+        createAlert(
+          'PriceKeeper2',
+          '0xPRICEKEEPER2ADDRESS',
+          4,
+          mockThresholds.PriceKeeper2,
+          0
+        ),
+        createAlert(
+          'PriceKeeper3',
+          '0xPRICEKEEPER3ADDRESS',
+          4,
+          mockThresholds.PriceKeeper3,
+          0
+        ),
+        createAlert(
+          'PriceKeeper4',
+          '0xPRICEKEEPER4ADDRESS',
+          4,
+          mockThresholds.PriceKeeper4,
+          0
+        ),
+        createAlert(
+          'PriceKeeper5',
+          '0xPRICEKEEPER5ADDRESS',
+          4,
+          mockThresholds.PriceKeeper5,
+          0
+        ),
+        createAlert(
+          'PriceKeeper6',
+          '0xPRICEKEEPER6ADDRESS',
+          4,
+          mockThresholds.PriceKeeper6,
+          0
+        ),
         createAlert('Liquidator', '0xLIQUIDATORADDRESS', 4, mockThresholds.Liquidator, 0),
+        createAlert(
+          'Liquidator2',
+          '0xLIQUIDATOR2ADDRESS',
+          4,
+          mockThresholds.Liquidator2,
+          0
+        ),
+        createAlert(
+          'CollateralLiquidator',
+          '0xCOLLATERALLIQUIDATORADDRESS',
+          4,
+          mockThresholds.CollateralLiquidator,
+          0
+        ),
       ];
 
       expect(findings).toStrictEqual(alerts);
     });
 
-    it('Test when only maker account balance is less than the threshold', async () => {
-      // mock the provider to return values less than threshold if this is the maker account
+    it('Test when only pricekeper account balance is less than the threshold', async () => {
+      // mock the provider to return values less than threshold if this is the pricekeper account
       const mockProvider = {
         getBalance: jest.fn((accountAddress) => {
-          // If this is the maker account, return 2900000000000000000 so it fires an alert
-          if (accountAddress === '0xMAKERADDRESS') {
+          // If this is the pricekeper account, return 2900000000000000000 so it fires an alert
+          if (accountAddress === '0xPRICEKEEPERADDRESS') {
             return Promise.resolve(2900000000000000000);
           }
           return Promise.resolve(4000000000000000000);
@@ -122,7 +185,13 @@ describe('account balance monitoring', () => {
 
       // Assertions
       const alerts = [
-        createAlert('Maker', '0xMAKERADDRESS', 2900000000000000000, mockThresholds.Maker, 0),
+        createAlert(
+          'PriceKeeper',
+          '0xPRICEKEEPERADDRESS',
+          2900000000000000000,
+          mockThresholds.PriceKeeper,
+          0
+        ),
       ];
 
       expect(findings).toStrictEqual(alerts);
@@ -196,10 +265,63 @@ describe('account balance monitoring', () => {
 
       // assertions
       const alerts = [
-        createAlert('Maker', '0xMAKERADDRESS', 4, mockThresholds.Maker, 0),
-        createAlert('Arbitrageur', '0xARBITRAGEURADDRESS', 4, mockThresholds.Arbitrageur, 0),
-        createAlert('CancelOrderKeeper', '0xCANCELORDERKEEPERADDRESS', 4, mockThresholds.CancelOrderKeeper, 0),
+        createAlert(
+          'PriceKeeper',
+          '0xPRICEKEEPERADDRESS',
+          4,
+          mockThresholds.PriceKeeper,
+          0
+        ),
+        createAlert(
+          'PriceKeeper2',
+          '0xPRICEKEEPER2ADDRESS',
+          4,
+          mockThresholds.PriceKeeper2,
+          0
+        ),
+        createAlert(
+          'PriceKeeper3',
+          '0xPRICEKEEPER3ADDRESS',
+          4,
+          mockThresholds.PriceKeeper3,
+          0
+        ),
+        createAlert(
+          'PriceKeeper4',
+          '0xPRICEKEEPER4ADDRESS',
+          4,
+          mockThresholds.PriceKeeper4,
+          0
+        ),
+        createAlert(
+          'PriceKeeper5',
+          '0xPRICEKEEPER5ADDRESS',
+          4,
+          mockThresholds.PriceKeeper5,
+          0
+        ),
+        createAlert(
+          'PriceKeeper6',
+          '0xPRICEKEEPER6ADDRESS',
+          4,
+          mockThresholds.PriceKeeper6,
+          0
+        ),
         createAlert('Liquidator', '0xLIQUIDATORADDRESS', 4, mockThresholds.Liquidator, 0),
+        createAlert(
+          'Liquidator2',
+          '0xLIQUIDATOR2ADDRESS',
+          4,
+          mockThresholds.Liquidator2,
+          0
+        ),
+        createAlert(
+          'CollateralLiquidator',
+          '0xCOLLATERALLIQUIDATORADDRESS',
+          4,
+          mockThresholds.CollateralLiquidator,
+          0
+        ),
       ];
 
       expect(findings).toStrictEqual(alerts);
@@ -268,10 +390,63 @@ describe('account balance monitoring', () => {
 
       // assertions
       const alerts = [
-        createAlert('Maker', '0xMAKERADDRESS', 4, mockThresholds.Maker, 2),
-        createAlert('Arbitrageur', '0xARBITRAGEURADDRESS', 4, mockThresholds.Arbitrageur, 2),
-        createAlert('CancelOrderKeeper', '0xCANCELORDERKEEPERADDRESS', 4, mockThresholds.CancelOrderKeeper, 2),
+        createAlert(
+          'PriceKeeper',
+          '0xPRICEKEEPERADDRESS',
+          4,
+          mockThresholds.PriceKeeper,
+          2
+        ),
+        createAlert(
+          'PriceKeeper2',
+          '0xPRICEKEEPER2ADDRESS',
+          4,
+          mockThresholds.PriceKeeper2,
+          2
+        ),
+        createAlert(
+          'PriceKeeper3',
+          '0xPRICEKEEPER3ADDRESS',
+          4,
+          mockThresholds.PriceKeeper3,
+          2
+        ),
+        createAlert(
+          'PriceKeeper4',
+          '0xPRICEKEEPER4ADDRESS',
+          4,
+          mockThresholds.PriceKeeper4,
+          2
+        ),
+        createAlert(
+          'PriceKeeper5',
+          '0xPRICEKEEPER5ADDRESS',
+          4,
+          mockThresholds.PriceKeeper5,
+          2
+        ),
+        createAlert(
+          'PriceKeeper6',
+          '0xPRICEKEEPER6ADDRESS',
+          4,
+          mockThresholds.PriceKeeper6,
+          2
+        ),
         createAlert('Liquidator', '0xLIQUIDATORADDRESS', 4, mockThresholds.Liquidator, 2),
+        createAlert(
+          'Liquidator2',
+          '0xLIQUIDATOR2ADDRESS',
+          4,
+          mockThresholds.Liquidator2,
+          2
+        ),
+        createAlert(
+          'CollateralLiquidator',
+          '0xCOLLATERALLIQUIDATORADDRESS',
+          4,
+          mockThresholds.CollateralLiquidator,
+          2
+        ),
       ];
 
       expect(findings).toStrictEqual(alerts);
@@ -304,10 +479,63 @@ describe('account balance monitoring', () => {
 
       // assertions
       const alerts = [
-        createAlert('Maker', '0xMAKERADDRESS', 4, mockThresholds.Maker, 2),
-        createAlert('Arbitrageur', '0xARBITRAGEURADDRESS', 4, mockThresholds.Arbitrageur, 2),
-        createAlert('CancelOrderKeeper', '0xCANCELORDERKEEPERADDRESS', 4, mockThresholds.CancelOrderKeeper, 2),
+        createAlert(
+          'PriceKeeper',
+          '0xPRICEKEEPERADDRESS',
+          4,
+          mockThresholds.PriceKeeper,
+          2
+        ),
+        createAlert(
+          'PriceKeeper2',
+          '0xPRICEKEEPER2ADDRESS',
+          4,
+          mockThresholds.PriceKeeper2,
+          2
+        ),
+        createAlert(
+          'PriceKeeper3',
+          '0xPRICEKEEPER3ADDRESS',
+          4,
+          mockThresholds.PriceKeeper3,
+          2
+        ),
+        createAlert(
+          'PriceKeeper4',
+          '0xPRICEKEEPER4ADDRESS',
+          4,
+          mockThresholds.PriceKeeper4,
+          2
+        ),
+        createAlert(
+          'PriceKeeper5',
+          '0xPRICEKEEPER5ADDRESS',
+          4,
+          mockThresholds.PriceKeeper5,
+          2
+        ),
+        createAlert(
+          'PriceKeeper6',
+          '0xPRICEKEEPER6ADDRESS',
+          4,
+          mockThresholds.PriceKeeper6,
+          2
+        ),
         createAlert('Liquidator', '0xLIQUIDATORADDRESS', 4, mockThresholds.Liquidator, 2),
+        createAlert(
+          'Liquidator2',
+          '0xLIQUIDATOR2ADDRESS',
+          4,
+          mockThresholds.Liquidator2,
+          2
+        ),
+        createAlert(
+          'CollateralLiquidator',
+          '0xCOLLATERALLIQUIDATORADDRESS',
+          4,
+          mockThresholds.CollateralLiquidator,
+          2
+        ),
       ];
 
       expect(findings).toStrictEqual(alerts);

@@ -12,6 +12,7 @@ WORKDIR /app
 # if using build stage
 # COPY --from=builder /app/dist ./
 COPY ./src ./src
+COPY ./LICENSE ./
 COPY package*.json ./
 RUN npm ci --production
 CMD [ "npm", "run", "start:prod" ]

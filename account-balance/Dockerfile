@@ -12,5 +12,6 @@ WORKDIR /app
 # if using build stage
 # COPY --from=builder /app/dist ./
 COPY ./src ./src
+COPY ./LICENSE ./
 RUN npm ci --production
 CMD [ "npm", "run", "start:prod" ]
